@@ -22050,7 +22050,7 @@ var GameContainer = function (_React$Component) {
     key: 'markSquareFull',
     value: function markSquareFull(rowNum, SquareNum) {
       this.setState(function (prevState) {
-        prevState.primaryBoard.rows[rowNum][SquareNum] = 'x';
+        prevState.primaryBoard.markSquareFull(rowNum, SquareNum);
         return prevState;
       });
     }

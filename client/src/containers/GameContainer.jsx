@@ -13,7 +13,7 @@ class GameContainer extends React.Component{
 
   markSquareFull(rowNum, SquareNum){
     this.setState((prevState) => {
-      prevState.primaryBoard.rows[rowNum][SquareNum] = 'x'
+      prevState.primaryBoard.markSquareFull(rowNum, SquareNum)
       return prevState
     })
   }
