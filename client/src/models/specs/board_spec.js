@@ -11,4 +11,8 @@ describe('Board tests:', function(){
     assert.strictEqual(5, rowCount)
   })
 
+  it('only creates squares', function(){
+    assert.throws(function(){new Board(2)}, Error, "number of squares must make a grid")
+  })
+
 })

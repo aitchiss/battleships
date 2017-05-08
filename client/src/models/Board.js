@@ -1,5 +1,10 @@
 
 var Board = function(numOfSquares){
+
+  if (numOfSquares < 0 || Math.sqrt(numOfSquares) % 1 !== 0){
+    throw new Error("number of squares must make a grid") 
+  }
+
   var noOfRows = Math.sqrt(numOfSquares)
   this.rows = []
 
