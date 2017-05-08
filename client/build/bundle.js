@@ -86,7 +86,7 @@ var _GameContainer2 = _interopRequireDefault(_GameContainer);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 window.onload = function () {
-  (0, _reactDom.render)(_react2.default.createElement(_GameContainer2.default, null), document.getElementById('app'));
+  (0, _reactDom.render)(_react2.default.createElement(_GameContainer2.default, { boardSize: 100 }), document.getElementById('app'));
 };
 
 /***/ }),
@@ -22016,6 +22016,10 @@ var _react = __webpack_require__(82);
 
 var _react2 = _interopRequireDefault(_react);
 
+var _Board = __webpack_require__(183);
+
+var _Board2 = _interopRequireDefault(_Board);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -22027,10 +22031,16 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var GameContainer = function (_React$Component) {
   _inherits(GameContainer, _React$Component);
 
-  function GameContainer() {
+  function GameContainer(props) {
     _classCallCheck(this, GameContainer);
 
-    return _possibleConstructorReturn(this, (GameContainer.__proto__ || Object.getPrototypeOf(GameContainer)).apply(this, arguments));
+    var _this = _possibleConstructorReturn(this, (GameContainer.__proto__ || Object.getPrototypeOf(GameContainer)).call(this, props));
+
+    _this.state = {
+      primaryBoard: new _Board2.default(props.boardSize)
+    };
+
+    return _this;
   }
 
   _createClass(GameContainer, [{
@@ -22049,6 +22059,43 @@ var GameContainer = function (_React$Component) {
 }(_react2.default.Component);
 
 exports.default = GameContainer;
+
+/***/ }),
+/* 183 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var Board = function Board(numOfSquares) {
+
+  var noOfRows = Math.sqrt(numOfSquares);
+
+  if (numOfSquares < 0 || noOfRows % 1 !== 0) {
+    throw new Error("number of squares must make a grid");
+  }
+
+  this.rows = [];
+
+  for (var i = 0; i < noOfRows; i++) {
+    var newRow = this.createNewRow(noOfRows);
+    this.rows[i] = newRow;
+  }
+};
+
+Board.prototype = {
+
+  createNewRow: function createNewRow(size) {
+    var row = [];
+    for (var i = 0; i < size; i++) {
+      var emptySquare = '';
+      row[i] = emptySquare;
+    }
+    return row;
+  }
+};
+
+module.exports = Board;
 
 /***/ })
 /******/ ]);

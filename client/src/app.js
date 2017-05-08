@@ -4,7 +4,7 @@ import GameContainer from './containers/GameContainer'
 
 window.onload = () => {
   render(
-    <GameContainer />,
+    <GameContainer boardSize={100}/>,
     document.getElementById('app')
   )
   
