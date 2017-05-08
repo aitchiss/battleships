@@ -8,12 +8,11 @@ class PrimaryBoard extends React.Component{
 
     const boardRows = []
     for (var i=0; i< this.props.size; i++){
-      boardRows[i] = <BoardRow size={this.props.size} key={i}/>
+      boardRows[i] = <BoardRow size={this.props.size} key={i} rowNo={i}/>
     }
 
     return(
       <div className="board">
-        <p>Placeholder</p>
         {boardRows}
       </div>
     )

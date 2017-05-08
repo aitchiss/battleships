@@ -22150,17 +22150,12 @@ var PrimaryBoard = function (_React$Component) {
 
       var boardRows = [];
       for (var i = 0; i < this.props.size; i++) {
-        boardRows[i] = _react2.default.createElement(_BoardRow2.default, { size: this.props.size, key: i });
+        boardRows[i] = _react2.default.createElement(_BoardRow2.default, { size: this.props.size, key: i, rowNo: i });
       }
 
       return _react2.default.createElement(
         'div',
         { className: 'board' },
-        _react2.default.createElement(
-          'p',
-          null,
-          'Placeholder'
-        ),
         boardRows
       );
     }
@@ -22186,17 +22181,54 @@ var _react = __webpack_require__(82);
 
 var _react2 = _interopRequireDefault(_react);
 
+var _Square = __webpack_require__(186);
+
+var _Square2 = _interopRequireDefault(_Square);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var BoardRow = function BoardRow() {
+var BoardRow = function BoardRow(props) {
+
+  var squares = [];
+  for (var i = 0; i < props.size; i++) {
+    squares[i] = _react2.default.createElement(_Square2.default, { key: i, rowNo: props.rowNo, squareNo: i });
+  }
+
   return _react2.default.createElement(
-    'p',
-    null,
-    'Placeholder board row'
+    'div',
+    { className: 'row' },
+    squares
   );
 };
 
 exports.default = BoardRow;
+
+/***/ }),
+/* 186 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(82);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Square = function Square(props) {
+  return _react2.default.createElement(
+    'p',
+    null,
+    'Square'
+  );
+};
+
+exports.default = Square;
 
 /***/ })
 /******/ ]);

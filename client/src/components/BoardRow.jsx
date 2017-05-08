@@ -1,8 +1,17 @@
 import React from 'react'
+import Square from './Square'
 
-const BoardRow = () => {
+const BoardRow = (props) => {
+
+  const squares = []
+  for (let i= 0; i < props.size; i++){
+    squares[i] = <Square key={i} rowNo={props.rowNo} squareNo={i}/>
+  }
+
   return(
-    <p>Placeholder board row</p>
+    <div className="row">
+      {squares}
+    </div>
   )
 
 }
