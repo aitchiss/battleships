@@ -22222,9 +22222,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var Square = function Square(props) {
   return _react2.default.createElement(
-    'p',
-    null,
-    'Square'
+    "div",
+    { className: "square" },
+    _react2.default.createElement(
+      "p",
+      null,
+      "Square"
+    )
   );
 };
 
