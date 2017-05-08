@@ -1,4 +1,3 @@
-
 var Board = function(numOfSquares){
 
   var noOfRows = Math.sqrt(numOfSquares)

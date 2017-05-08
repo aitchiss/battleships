@@ -25,4 +25,10 @@ describe('Board tests:', function(){
     assert.strictEqual('', board.rows[0][0])
   })
 
+  it('can have squares changed to full', function(){
+    var board = new Board(25)
+    board.rows[0][0] = 'x'
+    assert.strictEqual('x', board.rows[0][0])
+  })
+
 })
