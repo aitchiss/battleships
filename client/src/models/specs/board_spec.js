@@ -20,4 +20,9 @@ describe('Board tests:', function(){
     assert.strictEqual(5, board.rows[0].length)
   })
 
+  it('initializes with empty squares in each row', function(){
+    var board = new Board(25)
+    assert.strictEqual('', board.rows[0][0])
+  })
+
 })
