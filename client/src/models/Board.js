@@ -1,16 +1,29 @@
 
 var Board = function(numOfSquares){
 
-  if (numOfSquares < 0 || Math.sqrt(numOfSquares) % 1 !== 0){
+  var noOfRows = Math.sqrt(numOfSquares)
+
+  if (numOfSquares < 0 || noOfRows % 1 !== 0){
     throw new Error("number of squares must make a grid") 
   }
 
-  var noOfRows = Math.sqrt(numOfSquares)
   this.rows = []
 
   for (var i= 0; i < noOfRows; i++){
-    var newRow = []
+    var newRow = this.createNewRow(noOfRows)
     this.rows[i] = newRow
+  }
+}
+
+Board.prototype = {
+
+  createNewRow: function(size){
+    var row = []
+    for (var i = 0; i < size; i++){
+      var emptySquare = ''
+      row[i] = emptySquare
+    }
+    return row
   }
 }
 

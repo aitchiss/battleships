@@ -15,4 +15,9 @@ describe('Board tests:', function(){
     assert.throws(function(){new Board(2)}, Error, "number of squares must make a grid")
   })
 
+  it('creates rows with correct length', function(){
+    var board = new Board(25)
+    assert.strictEqual(5, board.rows[0].length)
+  })
+
 })
