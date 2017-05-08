@@ -31,4 +31,18 @@ describe('Board tests:', function(){
     assert.strictEqual('x', board.rows[0][0])
   })
 
+  it('returns board not full if under 17 squares marked', function(){
+    var board = new Board(25)
+    assert.strictEqual(false, board.checkIfBoardFull())
+  })
+
+  it('returns board is full is true if 17 squares marked', function(){
+    var board = new Board(25)
+    board.rows[0] = ['x', 'x', 'x', 'x', 'x']
+    board.rows[1] = ['x', 'x', 'x', 'x', 'x']
+    board.rows[2] = ['x', 'x', 'x', 'x', 'x']
+    board.rows[3] = ['x', 'x', '', '', '']
+    assert.strictEqual(true, board.checkIfBoardFull())
+  })
+
 })

@@ -22112,6 +22112,23 @@ Board.prototype = {
 
   markSquareFull: function markSquareFull(rowNum, SquareNum) {
     this.rows[rowNum][SquareNum] = 'x';
+  },
+
+  checkIfBoardFull: function checkIfBoardFull() {
+    var count = 0;
+    this.rows.forEach(function (row) {
+      row.forEach(function (square) {
+        if (square === 'x') {
+          count++;
+        }
+      }.bind(this));
+    }.bind(this));
+
+    if (count >= 17) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
 };
