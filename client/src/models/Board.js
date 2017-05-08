@@ -26,7 +26,10 @@ Board.prototype = {
   },
 
   markSquareFull: function(rowNum, SquareNum){
-    this.rows[rowNum][SquareNum] = 'x'
+    if (!this.checkIfBoardFull()){
+      this.rows[rowNum][SquareNum] = 'x'
+    }
+    
   },
 
   checkIfBoardFull: function(){

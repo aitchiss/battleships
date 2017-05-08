@@ -45,4 +45,14 @@ describe('Board tests:', function(){
     assert.strictEqual(true, board.checkIfBoardFull())
   })
 
+  it('prevents filling of further squares if already full', function(){
+    var board = new Board(25)
+    board.rows[0] = ['x', 'x', 'x', 'x', 'x']
+    board.rows[1] = ['x', 'x', 'x', 'x', 'x']
+    board.rows[2] = ['x', 'x', 'x', 'x', 'x']
+    board.rows[3] = ['x', 'x', '', '', '']
+    board.markSquareFull(3, 2)
+    assert.strictEqual('', board.rows[3][2])
+  })
+
 })
