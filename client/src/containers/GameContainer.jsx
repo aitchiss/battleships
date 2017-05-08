@@ -17,7 +17,7 @@ class GameContainer extends React.Component{
     return (
       <div className="game-container">
         <p>Placeholder</p>
-        <PrimaryBoard size={this.state.primaryBoard.rows.length}/>
+        <PrimaryBoard size={this.state.primaryBoard.rows.length} boardStatus={this.state.primaryBoard}/>
       </div>
 
     )

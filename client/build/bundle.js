@@ -22059,7 +22059,7 @@ var GameContainer = function (_React$Component) {
           null,
           'Placeholder'
         ),
-        _react2.default.createElement(_PrimaryBoard2.default, { size: this.state.primaryBoard.rows.length })
+        _react2.default.createElement(_PrimaryBoard2.default, { size: this.state.primaryBoard.rows.length, boardStatus: this.state.primaryBoard })
       );
     }
   }]);
@@ -22150,7 +22150,7 @@ var PrimaryBoard = function (_React$Component) {
 
       var boardRows = [];
       for (var i = 0; i < this.props.size; i++) {
-        boardRows[i] = _react2.default.createElement(_BoardRow2.default, { size: this.props.size, key: i, rowNo: i });
+        boardRows[i] = _react2.default.createElement(_BoardRow2.default, { size: this.props.size, key: i, rowNo: i, rowStatus: this.props.boardStatus.rows[i] });
       }
 
       return _react2.default.createElement(
@@ -22191,7 +22191,7 @@ var BoardRow = function BoardRow(props) {
 
   var squares = [];
   for (var i = 0; i < props.size; i++) {
-    squares[i] = _react2.default.createElement(_Square2.default, { key: i, rowNo: props.rowNo, squareNo: i });
+    squares[i] = _react2.default.createElement(_Square2.default, { key: i, rowNo: props.rowNo, squareNo: i, squareStatus: props.rowStatus[i] });
   }
 
   return _react2.default.createElement(
@@ -22224,11 +22224,7 @@ var Square = function Square(props) {
   return _react2.default.createElement(
     "div",
     { className: "square" },
-    _react2.default.createElement(
-      "p",
-      null,
-      "Square"
-    )
+    props.squareStatus
   );
 };
 

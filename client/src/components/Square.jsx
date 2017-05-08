@@ -3,7 +3,7 @@ import React from 'react'
 const Square = (props) => {
   return(
     <div className="square">
-      <p>Square</p>
+      {props.squareStatus}
     </div>
   )
 
