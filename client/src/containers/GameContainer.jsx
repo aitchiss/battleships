@@ -9,7 +9,13 @@ class GameContainer extends React.Component{
     this.state = {
       primaryBoard: new Board(props.boardSize)
     }
-    
+  }
+
+  markSquareFull(rowNum, SquareNum){
+    this.setState((prevState) => {
+      prevState.primaryBoard.rows[rowNum][SquareNum] = 'x'
+      return prevState
+    })
   }
 
   render(){
@@ -17,7 +23,7 @@ class GameContainer extends React.Component{
     return (
       <div className="game-container">
         <p>Placeholder</p>
-        <PrimaryBoard size={this.state.primaryBoard.rows.length} boardStatus={this.state.primaryBoard}/>
+        <PrimaryBoard size={this.state.primaryBoard.rows.length} boardStatus={this.state.primaryBoard} squareClickHandler={this.markSquareFull.bind(this)}/>
       </div>
 
     )

@@ -5,7 +5,7 @@ const BoardRow = (props) => {
 
   const squares = []
   for (let i= 0; i < props.size; i++){
-    squares[i] = <Square key={i} rowNo={props.rowNo} squareNo={i} squareStatus={props.rowStatus[i]}/>
+    squares[i] = <Square key={i} rowNo={props.rowNo} squareNo={i} squareStatus={props.rowStatus[i] }  squareClickHandler={props.squareClickHandler}/>
   }
 
   return(
