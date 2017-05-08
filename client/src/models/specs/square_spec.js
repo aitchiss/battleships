@@ -13,4 +13,9 @@ describe('Square tests:', function(){
   it('starts with empty status', function(){
     assert.strictEqual('empty', square.status)
   })
+
+  it('can be marked as full', function(){
+    square.markFull()
+    assert.strictEqual('full', square.status)
+  })
 })
