@@ -27,7 +27,7 @@ describe('Board tests:', function(){
 
   it('can have squares changed to full', function(){
     var board = new Board(25)
-    board.rows[0][0] = 'x'
+    board.markSquareFull(0, 0)
     assert.strictEqual('x', board.rows[0][0])
   })
 

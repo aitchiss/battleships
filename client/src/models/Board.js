@@ -23,7 +23,13 @@ Board.prototype = {
       row[i] = emptySquare
     }
     return row
+  },
+
+  markSquareFull: function(rowNum, SquareNum){
+    this.rows[rowNum][SquareNum] = 'x'
   }
+
+
 }
 
 module.exports = Board
