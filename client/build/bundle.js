@@ -9730,11 +9730,7 @@ var Square = function Square(props) {
 
   var colour = determineColour(props.squareStatus);
 
-  return _react2.default.createElement(
-    'div',
-    { className: 'square', style: { backgroundColor: colour }, onClick: onSquareClick.bind(undefined) },
-    props.squareStatus
-  );
+  return _react2.default.createElement('div', { className: 'square', style: { backgroundColor: colour }, onClick: onSquareClick.bind(undefined) });
 };
 
 exports.default = Square;

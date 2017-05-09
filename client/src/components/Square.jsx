@@ -23,7 +23,7 @@ const Square = (props) => {
   
   return(
     <div className="square" style={{backgroundColor: colour}} onClick={onSquareClick.bind(this)}>
-      {props.squareStatus}
+      
     </div>
   )
   
