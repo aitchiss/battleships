@@ -9,6 +9,19 @@ app.get('/', function (req, res) {
 
 app.use(express.static('client/build'))
 
+io.on('connection', function(socket){
+  socket.on('shotTaken', (coords) => {
+
+    io.sockets.emit('shotTaken', coords)
+  })
+
+  socket.on('shotResponse', (squareValue) => {
+
+    io.sockets.emit('shotResponse', squareValue)
+  })
+
+})
+
 
 http.listen(3000, function (){
   console.log('app listening at 3000')
