@@ -9556,7 +9556,7 @@ var GameContainer = function (_React$Component) {
 
     _this.state = {
       primaryBoard: new _Board2.default(props.boardSize),
-      trackingBoard: new _Board2.default(props.boardSize)
+      trackingBoard: new _Board2.default(props.boardSize, 'tracking')
     };
     return _this;
   }

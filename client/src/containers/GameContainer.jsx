@@ -8,7 +8,7 @@ class GameContainer extends React.Component{
     super(props)
     this.state = {
       primaryBoard: new Board(props.boardSize),
-      trackingBoard: new Board(props.boardSize)
+      trackingBoard: new Board(props.boardSize, 'tracking')
     }
   }
 
