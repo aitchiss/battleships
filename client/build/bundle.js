@@ -12990,6 +12990,10 @@ var _Board = __webpack_require__(109);
 
 var _Board2 = _interopRequireDefault(_Board);
 
+var _PlacementValidator = __webpack_require__(239);
+
+var _PlacementValidator2 = _interopRequireDefault(_PlacementValidator);
+
 var _BoardContainer = __webpack_require__(108);
 
 var _BoardContainer2 = _interopRequireDefault(_BoardContainer);
@@ -13088,11 +13092,18 @@ var GameContainer = function (_React$Component) {
   }, {
     key: 'placeShipHandler',
     value: function placeShipHandler() {
+      //needs to use validator, and also check each time that the correct number of squares are occupied. If not, there is an overlap in ships - not allowed
+
       var sizeOfShip = this.state.shipsToBePlaced[0];
-      var lengthOfSubmittedShip = this.state.shipCurrentlyBeingPlaced.length;
-      if (sizeOfShip !== lengthOfSubmittedShip) {
-        this.setState({ shipPlacementInstruction: "Ship incorrect length. Please try again. Place ship of size: " + sizeOfShip });
-      }
+      var submittedShip = this.state.shipCurrentlyBeingPlaced;
+
+      var validator = new _PlacementValidator2.default();
+      var valid = validator.validate(sizeOfShip, submittedShip);
+      console.log('valid?', valid);
+
+      // if (sizeOfShip !== lengthOfSubmittedShip){
+      //   this.setState({shipPlacementInstruction: "Ship incorrect length. Please try again. Place ship of size: " + sizeOfShip})
+      // }
     }
   }, {
     key: 'handleTrackingSquareClick',
@@ -30579,6 +30590,104 @@ var ShipPlacementInstruction = function ShipPlacementInstruction(props) {
 };
 
 exports.default = ShipPlacementInstruction;
+
+/***/ }),
+/* 239 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var PlacementValidator = function PlacementValidator() {};
+
+PlacementValidator.prototype = {
+
+  validate: function validate(expectedSize, coords) {
+    //check if correct length
+    if (expectedSize !== coords.length) return false;
+
+    //check if in a row or column
+    var inRow = this.isInOneRow(coords);
+    var inColumn = this.isInOneColumn(coords);
+    //set status to valid if either is true - return false if not true
+    var valid = inRow || inColumn;
+    if (!valid) return false;
+
+    //check for validate sequential placement within row or column
+    if (inRow) {
+      valid = this.checkRow(coords);
+    } else {
+      valid = this.checkColumn(coords);
+    }
+
+    return valid;
+  },
+
+  //checks for ships placed in a row if the squares are in sequential columns
+  checkRow: function checkRow(coords) {
+    var columns = [];
+    //add all of the column references to array and sort sequentially
+    coords.forEach(function (square) {
+      columns.push(square[1]);
+    }.bind(this));
+
+    return this.checkIfSequential(columns);
+  },
+
+  //helper method to check if a collection of row/column references are in direct sequence
+  checkIfSequential: function checkIfSequential(numArray) {
+    numArray.sort();
+    var sequential = true;
+    for (var i = 1; i < numArray.length; i++) {
+      var difference = numArray[i] - numArray[i - 1];
+      if (difference > 1) {
+        sequential = false;
+      }
+    }
+    return sequential;
+  },
+
+  checkColumn: function checkColumn(coords) {
+    var rows = [];
+
+    coords.forEach(function (square) {
+      rows.push(square[0]);
+    }.bind(this));
+
+    return this.checkIfSequential(rows);
+  },
+
+  isInOneRow: function isInOneRow(coords) {
+    var row = coords[0][0];
+    var numInSameRow = 0;
+
+    for (var i = 0; i < coords.length; i++) {
+      if (coords[i][0] === row) {
+        numInSameRow++;
+      }
+    }
+
+    if (numInSameRow !== coords.length) return false;
+    return true;
+  },
+
+  isInOneColumn: function isInOneColumn(coords) {
+
+    var col = coords[0][1];
+    var numInSameCol = 0;
+
+    for (var i = 0; i < coords.length; i++) {
+      if (coords[i][1] === col) {
+        numInSameCol++;
+      }
+    }
+
+    if (numInSameCol !== coords.length) return false;
+    return true;
+  }
+};
+
+module.exports = PlacementValidator;
 
 /***/ })
 /******/ ]);

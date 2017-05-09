@@ -1,5 +1,6 @@
 import React from 'react'
 import Board from '../models/Board'
+import PlacementValidator from '../models/PlacementValidator'
 import BoardContainer from './BoardContainer'
 import ShipPlacementInstruction from '../components/ShipPlacementInstruction'
 import io from 'socket.io-client'
@@ -70,11 +71,18 @@ class GameContainer extends React.Component{
   }
 
   placeShipHandler(){
+    //needs to use validator, and also check each time that the correct number of squares are occupied. If not, there is an overlap in ships - not allowed
+
     let sizeOfShip = this.state.shipsToBePlaced[0]
-    let lengthOfSubmittedShip = this.state.shipCurrentlyBeingPlaced.length
-    if (sizeOfShip !== lengthOfSubmittedShip){
-      this.setState({shipPlacementInstruction: "Ship incorrect length. Please try again. Place ship of size: " + sizeOfShip})
-    }
+    let submittedShip = this.state.shipCurrentlyBeingPlaced
+
+    const validator = new PlacementValidator()
+    const valid = validator.validate(sizeOfShip, submittedShip)
+    console.log('valid?', valid)
+
+    // if (sizeOfShip !== lengthOfSubmittedShip){
+    //   this.setState({shipPlacementInstruction: "Ship incorrect length. Please try again. Place ship of size: " + sizeOfShip})
+    // }
     
   }
 
