@@ -55,4 +55,9 @@ describe('Board tests:', function(){
     assert.strictEqual('', board.rows[3][2])
   })
 
+  it('initializes with unknown square values, if a tracking board', function(){
+    var board = new Board(25, 'tracking')
+    assert.strictEqual('?', board.rows[0][0])
+  })
+
 })

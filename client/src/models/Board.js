@@ -1,4 +1,4 @@
-var Board = function(numOfSquares){
+var Board = function(numOfSquares, type){
 
   var noOfRows = Math.sqrt(numOfSquares)
 
@@ -9,18 +9,22 @@ var Board = function(numOfSquares){
   this.rows = []
 
   for (var i= 0; i < noOfRows; i++){
-    var newRow = this.createNewRow(noOfRows)
+    var newRow = this.createNewRow(noOfRows, type)
     this.rows[i] = newRow
   }
 }
 
 Board.prototype = {
 
-  createNewRow: function(size){
+  createNewRow: function(size, type){
     var row = []
     for (var i = 0; i < size; i++){
-      var emptySquare = ''
-      row[i] = emptySquare
+      if(type === 'tracking'){
+        var initialSquare = '?'
+      } else {
+        var initialSquare = ''
+      }
+      row[i] = initialSquare
     }
     return row
   },
