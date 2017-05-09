@@ -14,4 +14,14 @@ describe('PlacementValidator tests:', function(){
     assert.strictEqual(false, placementValidator.validate(1, coords))
   })
 
+  it('returns true if all on same row and correct length', function(){
+    var coords = [[1, 0], [1, 1], [1, 2]]
+    assert.strictEqual(true, placementValidator.validate(3, coords))
+  })
+
+  it('returns false if not all on same row but correct length', function(){
+    var coords = [[1, 2], [2, 5], [4, 1]]
+    assert.strictEqual(false, placementValidator.validate(3, coords))
+  })
+
   })
