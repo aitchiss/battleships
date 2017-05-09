@@ -7,6 +7,7 @@ PlacementValidator.prototype = {
   validate: function(expectedSize, coords){
     //check if correct length
     if (expectedSize !== coords.length) return false
+
     //check if in a row or column
     var inRow = this.isInOneRow(coords)
     var inColumn = this.isInOneColumn(coords)
@@ -33,15 +34,17 @@ PlacementValidator.prototype = {
     }.bind(this))
 
     columns.sort()
-    var sequential = true
+    return this.checkIfSequential(columns)
+  },
 
-    for (var i = 1; i < columns.length; i++){
-      var colDifference = columns[i] - columns[i - 1]
-      if (colDifference > 1){
+  checkIfSequential: function(numArray){
+    var sequential = true
+    for (var i = 1; i < numArray.length; i++){
+      var difference = numArray[i] - numArray[i - 1]
+      if (difference > 1){
         sequential = false
       }
     }
-
     return sequential
   },
 
@@ -53,16 +56,7 @@ PlacementValidator.prototype = {
     }.bind(this)) 
 
     rows.sort()
-    var sequential = true 
-
-    for (var i = 1; i < rows.length; i++){
-      var rowDifference = rows[i] - rows[i - 1]
-      if (rowDifference > 1){
-        sequential = false
-      }
-    }
-
-    return sequential  
+    return this.checkIfSequential(rows) 
   },
 
   isInOneRow: function(coords){
