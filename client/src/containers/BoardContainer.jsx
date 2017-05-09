@@ -13,6 +13,7 @@ class BoardContainer extends React.Component{
 
     return(
       <div className="board">
+        <h3>{this.props.title}</h3>
         {boardRows}
       </div>
     )

@@ -1,3 +1,7 @@
+*{
+  font-family: Helvetica;
+}
+
 .game-container{
   display: flex;
   flex-wrap: wrap;
