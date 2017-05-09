@@ -1,20 +1,20 @@
 import React from 'react'
 
-class Square extends React.Component {
+const Square = (props) => {
 
-  onSquareClick(){
-    const row = this.props.rowNo
-    const squareId = this.props.squareNo
-    this.props.squareClickHandler(row, squareId)
+  const onSquareClick = function(){
+    const row = props.rowNo
+    const squareId = props.squareNo
+    props.squareClickHandler(row, squareId)
   }
 
-  render(){
-    return(
-      <div className="square" onClick={this.onSquareClick.bind(this)}>
-        {this.props.squareStatus}
-      </div>
-    )
-  }
+  
+  return(
+    <div className="square" onClick={onSquareClick.bind(this)}>
+      {props.squareStatus}
+    </div>
+  )
+  
   
 
 }
