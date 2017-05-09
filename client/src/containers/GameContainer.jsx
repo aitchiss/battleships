@@ -12,11 +12,15 @@ class GameContainer extends React.Component{
     }
   }
 
-  markSquareFull(rowNum, SquareNum){
+  markSquareFull(rowNum, squareNum){
     this.setState((prevState) => {
-      prevState.primaryBoard.markSquareFull(rowNum, SquareNum)
+      prevState.primaryBoard.markSquareFull(rowNum, squareNum)
       return prevState
     })
+  }
+
+  handleTrackingSquareClick(rowNum, squareNum){
+    console.log('row: ', rowNum, 'square: ', squareNum)
   }
 
   render(){
@@ -25,7 +29,7 @@ class GameContainer extends React.Component{
       <div className="game-container">
         <p>Placeholder</p>
         <BoardContainer size={this.state.primaryBoard.rows.length} boardStatus={this.state.primaryBoard} squareClickHandler={this.markSquareFull.bind(this)}/>
-        <BoardContainer size={this.state.primaryBoard.rows.length} boardStatus={this.state.trackingBoard} />
+        <BoardContainer size={this.state.primaryBoard.rows.length} boardStatus={this.state.trackingBoard} squareClickHandler={this.handleTrackingSquareClick.bind(this)}/>
       </div>
 
     )

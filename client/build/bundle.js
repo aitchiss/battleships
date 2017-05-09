@@ -9563,11 +9563,16 @@ var GameContainer = function (_React$Component) {
 
   _createClass(GameContainer, [{
     key: 'markSquareFull',
-    value: function markSquareFull(rowNum, SquareNum) {
+    value: function markSquareFull(rowNum, squareNum) {
       this.setState(function (prevState) {
-        prevState.primaryBoard.markSquareFull(rowNum, SquareNum);
+        prevState.primaryBoard.markSquareFull(rowNum, squareNum);
         return prevState;
       });
+    }
+  }, {
+    key: 'handleTrackingSquareClick',
+    value: function handleTrackingSquareClick(rowNum, squareNum) {
+      console.log('row: ', rowNum, 'square: ', squareNum);
     }
   }, {
     key: 'render',
@@ -9582,7 +9587,7 @@ var GameContainer = function (_React$Component) {
           'Placeholder'
         ),
         _react2.default.createElement(_BoardContainer2.default, { size: this.state.primaryBoard.rows.length, boardStatus: this.state.primaryBoard, squareClickHandler: this.markSquareFull.bind(this) }),
-        _react2.default.createElement(_BoardContainer2.default, { size: this.state.primaryBoard.rows.length, boardStatus: this.state.trackingBoard })
+        _react2.default.createElement(_BoardContainer2.default, { size: this.state.primaryBoard.rows.length, boardStatus: this.state.trackingBoard, squareClickHandler: this.handleTrackingSquareClick.bind(this) })
       );
     }
   }]);
