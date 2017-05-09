@@ -10,10 +10,15 @@ PlacementValidator.prototype = {
     //check if in a row or column
     var inRow = this.isInOneRow(coords)
     var inColumn = this.isInOneColumn(coords)
-    //set status to valid if either is true
+    //set status to valid if either is true - return false if not true
     var valid = (inRow || inColumn)
+    if (!valid) return false
+
+    //check for validate sequential placement within row or column
     if (inRow){
       valid = this.checkRow(coords)
+    } else {
+      valid = this.checkColumn(coords)
     }
 
     return valid
@@ -38,6 +43,26 @@ PlacementValidator.prototype = {
     }
 
     return sequential
+  },
+
+  checkColumn: function(coords){
+    var rows = []
+
+    coords.forEach(function(square){
+      rows.push(square[0])
+    }.bind(this)) 
+
+    rows.sort()
+    var sequential = true 
+
+    for (var i = 1; i < rows.length; i++){
+      var rowDifference = rows[i] - rows[i - 1]
+      if (rowDifference > 1){
+        sequential = false
+      }
+    }
+
+    return sequential  
   },
 
   isInOneRow: function(coords){
