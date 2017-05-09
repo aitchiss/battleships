@@ -33,11 +33,12 @@ PlacementValidator.prototype = {
       columns.push(square[1])
     }.bind(this))
 
-    columns.sort()
     return this.checkIfSequential(columns)
   },
 
+  //helper method to check if a collection of row/column references are in direct sequence
   checkIfSequential: function(numArray){
+    numArray.sort()
     var sequential = true
     for (var i = 1; i < numArray.length; i++){
       var difference = numArray[i] - numArray[i - 1]
@@ -54,8 +55,7 @@ PlacementValidator.prototype = {
     coords.forEach(function(square){
       rows.push(square[0])
     }.bind(this)) 
-
-    rows.sort()
+    
     return this.checkIfSequential(rows) 
   },
 
