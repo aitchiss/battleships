@@ -1,6 +1,7 @@
 import React from 'react'
 import Board from '../models/Board'
 import BoardContainer from './BoardContainer'
+import ShipPlacementInstruction from '../components/ShipPlacementInstruction'
 import io from 'socket.io-client'
 
 class GameContainer extends React.Component{
@@ -8,6 +9,9 @@ class GameContainer extends React.Component{
   constructor(props){
     super(props)
     this.state = {
+      shipsToBePlaced: [5, 4, 3, 3, 2],
+      shipCurrentlyBeingPlaced: [],
+      shipPlacementInstruction: null,
       primaryBoard: new Board(props.boardSize),
       trackingBoard: new Board(props.boardSize, 'tracking'),
       shotTaken: {
@@ -19,6 +23,11 @@ class GameContainer extends React.Component{
     this.socket = io("http://localhost:3000")
     this.socket.on('shotTaken', this.processShot.bind(this))
     this.socket.on('shotResponse', this.receiveShotResponse.bind(this))
+  }
+
+  componentDidMount(){
+    const sizeOfFirstShip = this.state.shipsToBePlaced[0]
+    this.setState({shipPlacementInstruction: "click to place a ship of size: " + sizeOfFirstShip})
   }
 
   receiveShotResponse(squareValue){
@@ -51,11 +60,22 @@ class GameContainer extends React.Component{
     }
   }
 
+  //placing own ships function
   markSquareFull(rowNum, squareNum){
     this.setState((prevState) => {
+      prevState.shipCurrentlyBeingPlaced.push([rowNum, squareNum])
       prevState.primaryBoard.markSquareFull(rowNum, squareNum)
       return prevState
     })
+  }
+
+  placeShipHandler(){
+    let sizeOfShip = this.state.shipsToBePlaced[0]
+    let lengthOfSubmittedShip = this.state.shipCurrentlyBeingPlaced.length
+    if (sizeOfShip !== lengthOfSubmittedShip){
+      this.setState({shipPlacementInstruction: "Ship incorrect length. Please try again. Place ship of size: " + sizeOfShip})
+    }
+    
   }
 
   handleTrackingSquareClick(rowNum, squareNum){
@@ -74,7 +94,10 @@ class GameContainer extends React.Component{
 
     return (
       <div className="game-container">
-        <BoardContainer size={this.state.primaryBoard.rows.length} boardStatus={this.state.primaryBoard} squareClickHandler={this.markSquareFull.bind(this)} title={"Your ships"}/>
+        <div className="ship-placement-area">
+          <BoardContainer size={this.state.primaryBoard.rows.length} boardStatus={this.state.primaryBoard} squareClickHandler={this.markSquareFull.bind(this)} title={"Your ships"}/>
+          <ShipPlacementInstruction instruction={this.state.shipPlacementInstruction} buttonClickHandler={this.placeShipHandler.bind(this)}/>
+        </div>
         <BoardContainer size={this.state.primaryBoard.rows.length} boardStatus={this.state.trackingBoard} squareClickHandler={this.handleTrackingSquareClick.bind(this)} title={"Tracking board"}/>
       </div>
 
