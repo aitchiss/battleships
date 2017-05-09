@@ -34,4 +34,9 @@ describe('PlacementValidator tests:', function(){
     assert.strictEqual(false, placementValidator.validate(3, coords))
   })
 
+  it('returns false if ship placed in row covers non sequential columns', function(){
+    var coords = [[1, 1], [1, 2], [1, 5]]
+    assert.strictEqual(false, placementValidator.validate(3, coords))
+  })
+
   })

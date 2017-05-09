@@ -10,9 +10,34 @@ PlacementValidator.prototype = {
     //check if in a row or column
     var inRow = this.isInOneRow(coords)
     var inColumn = this.isInOneColumn(coords)
+    //set status to valid if either is true
     var valid = (inRow || inColumn)
+    if (inRow){
+      valid = this.checkRow(coords)
+    }
 
     return valid
+  },
+
+  //checks for ships placed in a row if the squares are in sequential columns
+  checkRow: function(coords){
+    var columns = []
+    //add all of the column references to array and sort sequentially
+    coords.forEach(function(square){
+      columns.push(square[1])
+    }.bind(this))
+
+    columns.sort()
+    var sequential = true
+
+    for (var i = 1; i < columns.length; i++){
+      var colDifference = columns[i] - columns[i - 1]
+      if (colDifference > 1){
+        sequential = false
+      }
+    }
+
+    return sequential
   },
 
   isInOneRow: function(coords){
