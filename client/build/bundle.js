@@ -9718,9 +9718,21 @@ var Square = function Square(props) {
     props.squareClickHandler(row, squareId);
   };
 
+  var determineColour = function determineColour(squareValue) {
+    if (squareValue === '') {
+      return '#3EB0E1';
+    } else if (squareValue === 'x') {
+      return '#FFA43E';
+    } else {
+      return '#A7BAC2';
+    }
+  };
+
+  var colour = determineColour(props.squareStatus);
+
   return _react2.default.createElement(
-    "div",
-    { className: "square", onClick: onSquareClick.bind(undefined) },
+    'div',
+    { className: 'square', style: { backgroundColor: colour }, onClick: onSquareClick.bind(undefined) },
     props.squareStatus
   );
 };
