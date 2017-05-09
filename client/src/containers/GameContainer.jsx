@@ -74,7 +74,6 @@ class GameContainer extends React.Component{
 
     return (
       <div className="game-container">
-        <p>Placeholder</p>
         <BoardContainer size={this.state.primaryBoard.rows.length} boardStatus={this.state.primaryBoard} squareClickHandler={this.markSquareFull.bind(this)}/>
         <BoardContainer size={this.state.primaryBoard.rows.length} boardStatus={this.state.trackingBoard} squareClickHandler={this.handleTrackingSquareClick.bind(this)}/>
       </div>

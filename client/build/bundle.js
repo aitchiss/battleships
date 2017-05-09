@@ -9630,11 +9630,6 @@ var GameContainer = function (_React$Component) {
       return _react2.default.createElement(
         'div',
         { className: 'game-container' },
-        _react2.default.createElement(
-          'p',
-          null,
-          'Placeholder'
-        ),
         _react2.default.createElement(_BoardContainer2.default, { size: this.state.primaryBoard.rows.length, boardStatus: this.state.primaryBoard, squareClickHandler: this.markSquareFull.bind(this) }),
         _react2.default.createElement(_BoardContainer2.default, { size: this.state.primaryBoard.rows.length, boardStatus: this.state.trackingBoard, squareClickHandler: this.handleTrackingSquareClick.bind(this) })
       );
