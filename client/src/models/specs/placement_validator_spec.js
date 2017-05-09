@@ -39,4 +39,9 @@ describe('PlacementValidator tests:', function(){
     assert.strictEqual(false, placementValidator.validate(3, coords))
   })
 
+  it('returns true if columns are sequential, but provided in wrong order', function(){
+    var coords = [[1, 1], [1, 3], [1, 2]]
+    assert.strictEqual(true, placementValidator.validate(3, coords))
+  })
+
   })
