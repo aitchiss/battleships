@@ -2,7 +2,7 @@ import React from 'react'
 import BoardRow from '../components/BoardRow'
 
 
-class PrimaryBoard extends React.Component{
+class BoardContainer extends React.Component{
 
   render(){
 
@@ -21,4 +21,4 @@ class PrimaryBoard extends React.Component{
   
 }
 
-export default PrimaryBoard
+export default BoardContainer
