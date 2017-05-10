@@ -9557,6 +9557,7 @@ var GameContainer = function (_React$Component) {
     var _this = _possibleConstructorReturn(this, (GameContainer.__proto__ || Object.getPrototypeOf(GameContainer)).call(this, props));
 
     _this.state = {
+      instructionDisplay: 'block',
       shipsToBePlaced: [5, 4, 3, 3, 2],
       shipSquaresAllocated: 0,
       shipCurrentlyBeingPlaced: [],
@@ -9643,17 +9644,24 @@ var GameContainer = function (_React$Component) {
       //AND if number of squares currently occupied is consistent with boats placed (no overlaps)
       if (valid && currentlyOccupiedSquares === newTotalShipSquaresAllocated) {
         this.setState(function (prevState) {
-          prevState.shipsToBePlaced.shift();
-          var prevInstruction = prevState.shipPlacementInstruction;
-          var newInstruction = prevInstruction.substring(0, prevInstruction.length - 1) + prevState.shipsToBePlaced[0];
-          prevState.shipPlacementInstruction = newInstruction;
+          //remove the first item from the ships to be placed array, and add it to the squares occupied count
+          prevState.shipSquaresAllocated += prevState.shipsToBePlaced.shift();
+          //clears the placement coordinates
+          prevState.shipCurrentlyBeingPlaced = [];
+          //refreshes the instructions
+
+          //check if we need render new instructions
+          if (prevState.shipsToBePlaced.length === 0) {
+            prevState.instructionDisplay = 'none';
+          } else {
+            var prevInstruction = prevState.shipPlacementInstruction;
+            var newInstruction = prevInstruction.substring(0, prevInstruction.length - 1) + prevState.shipsToBePlaced[0];
+            prevState.shipPlacementInstruction = newInstruction;
+          }
 
           return prevState;
         });
       }
-
-      //remove the first item from the ships to be placed array, and add it to the squares occupied count
-
       //later will need some code to deal with the event when there are no further items in the ships to be placed array
     }
   }, {
@@ -9678,7 +9686,7 @@ var GameContainer = function (_React$Component) {
           'div',
           { className: 'ship-placement-area' },
           _react2.default.createElement(_BoardContainer2.default, { size: this.state.primaryBoard.rows.length, boardStatus: this.state.primaryBoard, squareClickHandler: this.markSquareFull.bind(this), title: "Your ships" }),
-          _react2.default.createElement(_ShipPlacementInstruction2.default, { instruction: this.state.shipPlacementInstruction, buttonClickHandler: this.placeShipHandler.bind(this) })
+          _react2.default.createElement(_ShipPlacementInstruction2.default, { instruction: this.state.shipPlacementInstruction, buttonClickHandler: this.placeShipHandler.bind(this), displayOption: this.state.instructionDisplay })
         ),
         _react2.default.createElement(_BoardContainer2.default, { size: this.state.primaryBoard.rows.length, boardStatus: this.state.trackingBoard, squareClickHandler: this.handleTrackingSquareClick.bind(this), title: "Tracking board" })
       );
@@ -25698,9 +25706,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var ShipPlacementInstruction = function ShipPlacementInstruction(props) {
 
+  console.log(props);
   return _react2.default.createElement(
     "div",
-    { className: "ship-placement" },
+    { className: "ship-placement", style: { display: props.displayOption } },
     _react2.default.createElement(
       "p",
       null,

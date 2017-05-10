@@ -10,6 +10,7 @@ class GameContainer extends React.Component{
   constructor(props){
     super(props)
     this.state = {
+      instructionDisplay: 'block',
       shipsToBePlaced: [5, 4, 3, 3, 2],
       shipSquaresAllocated: 0,
       shipCurrentlyBeingPlaced: [],
@@ -88,21 +89,30 @@ class GameContainer extends React.Component{
     //AND if number of squares currently occupied is consistent with boats placed (no overlaps)
     if(valid && currentlyOccupiedSquares === newTotalShipSquaresAllocated){
       this.setState((prevState) => {
-        prevState.shipsToBePlaced.shift()
-        var prevInstruction = prevState.shipPlacementInstruction
-        var newInstruction = prevInstruction.substring(0, prevInstruction.length - 1) + prevState.shipsToBePlaced[0]
-        prevState.shipPlacementInstruction = newInstruction
+        //remove the first item from the ships to be placed array, and add it to the squares occupied count
+        prevState.shipSquaresAllocated += prevState.shipsToBePlaced.shift()
+        //clears the placement coordinates
+        prevState.shipCurrentlyBeingPlaced = []
+        //refreshes the instructions
+
+        //check if we need render new instructions
+        if (prevState.shipsToBePlaced.length === 0){
+          prevState.instructionDisplay = 'none'
+        } else {
+          var prevInstruction = prevState.shipPlacementInstruction
+          var newInstruction = prevInstruction.substring(0, prevInstruction.length - 1) + prevState.shipsToBePlaced[0]
+          prevState.shipPlacementInstruction = newInstruction
+        }
+        
         
         return prevState
       })
     }
-
-    
-    //remove the first item from the ships to be placed array, and add it to the squares occupied count
-
     //later will need some code to deal with the event when there are no further items in the ships to be placed array
     
   }
+
+ 
 
   handleTrackingSquareClick(rowNum, squareNum){
     let coords = {
@@ -122,7 +132,7 @@ class GameContainer extends React.Component{
       <div className="game-container">
         <div className="ship-placement-area">
           <BoardContainer size={this.state.primaryBoard.rows.length} boardStatus={this.state.primaryBoard} squareClickHandler={this.markSquareFull.bind(this)} title={"Your ships"}/>
-          <ShipPlacementInstruction instruction={this.state.shipPlacementInstruction} buttonClickHandler={this.placeShipHandler.bind(this)}/>
+          <ShipPlacementInstruction instruction={this.state.shipPlacementInstruction} buttonClickHandler={this.placeShipHandler.bind(this)} displayOption={this.state.instructionDisplay}/>
         </div>
         <BoardContainer size={this.state.primaryBoard.rows.length} boardStatus={this.state.trackingBoard} squareClickHandler={this.handleTrackingSquareClick.bind(this)} title={"Tracking board"}/>
       </div>
