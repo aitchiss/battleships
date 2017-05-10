@@ -11,6 +11,7 @@ class GameContainer extends React.Component{
     super(props)
     this.state = {
       shipsToBePlaced: [5, 4, 3, 3, 2],
+      shipSquaresAllocated: 0,
       shipCurrentlyBeingPlaced: [],
       shipPlacementInstruction: null,
       primaryBoard: new Board(props.boardSize),
@@ -80,8 +81,23 @@ class GameContainer extends React.Component{
     const valid = validator.validate(sizeOfShip, submittedShip)
     console.log('valid?', valid)
 
+    let currentlyOccupiedSquares = this.state.primaryBoard.getNumOfOccupiedSquares()
+    let newTotalShipSquaresAllocated = this.state.shipSquaresAllocated + sizeOfShip
+
     //if placement valid
     //AND if number of squares currently occupied is consistent with boats placed (no overlaps)
+    if(valid && currentlyOccupiedSquares === newTotalShipSquaresAllocated){
+      this.setState((prevState) => {
+        prevState.shipsToBePlaced.shift()
+        var prevInstruction = prevState.shipPlacementInstruction
+        var newInstruction = prevInstruction.substring(0, prevInstruction.length - 1) + prevState.shipsToBePlaced[0]
+        prevState.shipPlacementInstruction = newInstruction
+        
+        return prevState
+      })
+    }
+
+    
     //remove the first item from the ships to be placed array, and add it to the squares occupied count
 
     //later will need some code to deal with the event when there are no further items in the ships to be placed array
