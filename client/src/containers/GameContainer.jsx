@@ -10,7 +10,9 @@ class GameContainer extends React.Component{
   constructor(props){
     super(props)
     this.state = {
+      socketID: null,
       readyToPlay: false,
+      opponentReadyToPlay: false,
       instructionDisplay: 'block',
       shipsToBePlaced: [5, 4, 3, 3, 2],
       shipSquaresAllocated: 0,
@@ -27,13 +29,28 @@ class GameContainer extends React.Component{
 
     //socket listens for shots taken, and responses that detail player square's contents
     this.socket = io("http://localhost:3000")
+
+    //on connection, store our own socket id
+    this.socket.on('connect', () => {
+      this.setState({socketID: this.socket.id})
+    })
+
+
     this.socket.on('shotTaken', this.processShot.bind(this))
     this.socket.on('shotResponse', this.receiveShotResponse.bind(this))
+    this.socket.on('readyToPlay', this.markOpponentReady.bind(this))
   }
 
   componentDidMount(){
     const sizeOfFirstShip = this.state.shipsToBePlaced[0]
     this.setState({shipPlacementInstruction: "Click to place a ship of size: " + sizeOfFirstShip})
+  }
+
+  markOpponentReady(socketID){
+    if(socketID !== this.state.socketID){
+      this.setState({opponentReadyToPlay: true})
+    }
+    
   }
 
   receiveShotResponse(squareValue){
@@ -146,6 +163,7 @@ class GameContainer extends React.Component{
         //if no further ships to place, remove the instruction panel and set player as ready to play
         prevState.readyToPlay = true
         prevState.instructionDisplay = 'none'
+        this.socket.emit('readyToPlay', this.socket.id)
       } else {
         //remove the error text
         prevState.errorText = ''

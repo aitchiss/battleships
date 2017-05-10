@@ -20,6 +20,10 @@ io.on('connection', function(socket){
     io.sockets.emit('shotResponse', squareValue)
   })
 
+  socket.on('readyToPlay', (id) => {
+    io.sockets.emit('readyToPlay', id)
+  })
+
 })
 
 

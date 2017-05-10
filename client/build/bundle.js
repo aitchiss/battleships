@@ -9557,7 +9557,9 @@ var GameContainer = function (_React$Component) {
     var _this = _possibleConstructorReturn(this, (GameContainer.__proto__ || Object.getPrototypeOf(GameContainer)).call(this, props));
 
     _this.state = {
+      socketID: null,
       readyToPlay: false,
+      opponentReadyToPlay: false,
       instructionDisplay: 'block',
       shipsToBePlaced: [5, 4, 3, 3, 2],
       shipSquaresAllocated: 0,
@@ -9574,8 +9576,15 @@ var GameContainer = function (_React$Component) {
 
     //socket listens for shots taken, and responses that detail player square's contents
     _this.socket = (0, _socket2.default)("http://localhost:3000");
+
+    //on connection, store our own socket id
+    _this.socket.on('connect', function () {
+      _this.setState({ socketID: _this.socket.id });
+    });
+
     _this.socket.on('shotTaken', _this.processShot.bind(_this));
     _this.socket.on('shotResponse', _this.receiveShotResponse.bind(_this));
+    _this.socket.on('readyToPlay', _this.markOpponentReady.bind(_this));
     return _this;
   }
 
@@ -9584,6 +9593,13 @@ var GameContainer = function (_React$Component) {
     value: function componentDidMount() {
       var sizeOfFirstShip = this.state.shipsToBePlaced[0];
       this.setState({ shipPlacementInstruction: "Click to place a ship of size: " + sizeOfFirstShip });
+    }
+  }, {
+    key: 'markOpponentReady',
+    value: function markOpponentReady(socketID) {
+      if (socketID !== this.state.socketID) {
+        this.setState({ opponentReadyToPlay: true });
+      }
     }
   }, {
     key: 'receiveShotResponse',
@@ -9694,6 +9710,8 @@ var GameContainer = function (_React$Component) {
   }, {
     key: 'processValidPlacement',
     value: function processValidPlacement() {
+      var _this3 = this;
+
       this.setState(function (prevState) {
         //remove the first item from the ships to be placed array, and add it to the squares occupied count
         prevState.shipSquaresAllocated += prevState.shipsToBePlaced.shift();
@@ -9706,6 +9724,7 @@ var GameContainer = function (_React$Component) {
           //if no further ships to place, remove the instruction panel and set player as ready to play
           prevState.readyToPlay = true;
           prevState.instructionDisplay = 'none';
+          _this3.socket.emit('readyToPlay', _this3.socket.id);
         } else {
           //remove the error text
           prevState.errorText = '';
