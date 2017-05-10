@@ -13,6 +13,7 @@ class GameContainer extends React.Component{
     this.state = {
       socketID: null,
       readyToPlay: false,
+      gameOver: false,
       currentTurn: null,
       opponentReadyToPlay: false,
       instructionDisplay: 'block',
@@ -28,7 +29,10 @@ class GameContainer extends React.Component{
       shotTaken: {
         row: null,
         square: null
-      }
+      },
+      //stats for how many hits on target, and how many sustained
+      hitsTaken: 0,
+      hitsScored: 0
     }
 
     //socket listens for shots taken, and responses that detail player square's contents
@@ -61,35 +65,66 @@ class GameContainer extends React.Component{
     
   }
 
-  receiveShotResponse(squareValue){
-    let currentShot = this.state.shotTaken
+  receiveShotResponse(squareValueAndID){
     //if statement to check this player made the shot, not the opposite player
-    if (currentShot.row !== null){
-
-      this.setState((prevState) => {
-        prevState.trackingBoard.rows[prevState.shotTaken.row][prevState.shotTaken.square] = squareValue
-        prevState.shotTaken = {
-          row: null,
-          square: null
-        }
-        return prevState
-      })
-    }
+    if (squareValueAndID.id == this.state.socketID) return
+    const squareValue = squareValueAndID.squareValue
+    this.setState((prevState) => {
+      prevState.trackingBoard.rows[prevState.shotTaken.row][prevState.shotTaken.square] = squareValue
+      prevState.shotTaken = {
+        row: null,
+        square: null
+      }
+      if(squareValue === 'x'){
+        prevState.hitsScored = prevState.hitsScored + 1
+        
+      }
+      return prevState
+      this.checkIfWon()
+    })
    
   }
 
-  processShot(coordsAndID){
-    //if statement to check that the other player made the shot, and we need to respond
-    
-    if (coordsAndID.id !== this.state.socketID){
-      let row = coordsAndID.row
-      let square = coordsAndID.square
-
-      let squareValue = this.state.primaryBoard.rows[row][square]
-
-      this.socket.emit('shotResponse', squareValue)
-      this.alternateTurn()
+  checkIfLost(){
+    if (this.state.hitsTaken === 17){
+      this.setState({gameOver: true, primaryPlayerInfo: 'You lose!', opponentPlayerInfo: 'Opponent wins'})
     }
+  }
+
+  checkIfWon(){
+    if (this.state.hitsScored === 17){
+      this.setState({gameOver: true, primaryPlayerInfo: 'You win!', opponentPlayerInfo: 'Opponent loses'})
+    }
+  }
+
+  processShot(coordsAndID){
+    //check that the other player made the shot, and we need to respond
+    if (coordsAndID.id === this.state.socketID) return
+
+    let row = coordsAndID.row
+    let square = coordsAndID.square
+
+    let squareValue = this.state.primaryBoard.rows[row][square]
+
+    if(squareValue === 'x'){
+      this.setState((prevState) => {
+        prevState.hitsTaken = prevState.hitsTaken + 1
+        return prevState
+      })
+      this.checkIfLost()
+    }
+
+    let squareValueAndID = {
+      squareValue: squareValue,
+      id: this.state.socketID
+    }
+
+    this.socket.emit('shotResponse', squareValueAndID)
+    
+    //swap the turn values
+    this.alternateTurn()
+
+    
   }
 
   //NEED TO RENAME THIS FUNCTION!

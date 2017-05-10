@@ -15,9 +15,9 @@ io.on('connection', function(socket){
     io.sockets.emit('shotTaken', coords)
   })
 
-  socket.on('shotResponse', (squareValue) => {
+  socket.on('shotResponse', (squareValueAndID) => {
 
-    io.sockets.emit('shotResponse', squareValue)
+    io.sockets.emit('shotResponse', squareValueAndID)
   })
 
   socket.on('readyToPlay', (id) => {

@@ -9563,6 +9563,7 @@ var GameContainer = function (_React$Component) {
     _this.state = {
       socketID: null,
       readyToPlay: false,
+      gameOver: false,
       currentTurn: null,
       opponentReadyToPlay: false,
       instructionDisplay: 'block',
@@ -9578,7 +9579,10 @@ var GameContainer = function (_React$Component) {
       shotTaken: {
         row: null,
         square: null
-      }
+      },
+      //stats for how many hits on target, and how many sustained
+      hitsTaken: 0,
+      hitsScored: 0
     };
 
     //socket listens for shots taken, and responses that detail player square's contents
@@ -9614,35 +9618,67 @@ var GameContainer = function (_React$Component) {
     }
   }, {
     key: 'receiveShotResponse',
-    value: function receiveShotResponse(squareValue) {
-      var currentShot = this.state.shotTaken;
-      //if statement to check this player made the shot, not the opposite player
-      if (currentShot.row !== null) {
+    value: function receiveShotResponse(squareValueAndID) {
+      var _this2 = this;
 
-        this.setState(function (prevState) {
-          prevState.trackingBoard.rows[prevState.shotTaken.row][prevState.shotTaken.square] = squareValue;
-          prevState.shotTaken = {
-            row: null,
-            square: null
-          };
-          return prevState;
-        });
+      //if statement to check this player made the shot, not the opposite player
+      if (squareValueAndID.id == this.state.socketID) return;
+      var squareValue = squareValueAndID.squareValue;
+      this.setState(function (prevState) {
+        prevState.trackingBoard.rows[prevState.shotTaken.row][prevState.shotTaken.square] = squareValue;
+        prevState.shotTaken = {
+          row: null,
+          square: null
+        };
+        if (squareValue === 'x') {
+          prevState.hitsScored = prevState.hitsScored + 1;
+        }
+        return prevState;
+        _this2.checkIfWon();
+      });
+    }
+  }, {
+    key: 'checkIfLost',
+    value: function checkIfLost() {
+      if (this.state.hitsTaken === 17) {
+        this.setState({ gameOver: true, primaryPlayerInfo: 'You lose!', opponentPlayerInfo: 'Opponent wins' });
+      }
+    }
+  }, {
+    key: 'checkIfWon',
+    value: function checkIfWon() {
+      if (this.state.hitsScored === 17) {
+        this.setState({ gameOver: true, primaryPlayerInfo: 'You win!', opponentPlayerInfo: 'Opponent loses' });
       }
     }
   }, {
     key: 'processShot',
     value: function processShot(coordsAndID) {
-      //if statement to check that the other player made the shot, and we need to respond
+      //check that the other player made the shot, and we need to respond
+      if (coordsAndID.id === this.state.socketID) return;
 
-      if (coordsAndID.id !== this.state.socketID) {
-        var row = coordsAndID.row;
-        var square = coordsAndID.square;
+      var row = coordsAndID.row;
+      var square = coordsAndID.square;
 
-        var squareValue = this.state.primaryBoard.rows[row][square];
+      var squareValue = this.state.primaryBoard.rows[row][square];
 
-        this.socket.emit('shotResponse', squareValue);
-        this.alternateTurn();
+      if (squareValue === 'x') {
+        this.setState(function (prevState) {
+          prevState.hitsTaken = prevState.hitsTaken + 1;
+          return prevState;
+        });
+        this.checkIfLost();
       }
+
+      var squareValueAndID = {
+        squareValue: squareValue,
+        id: this.state.socketID
+      };
+
+      this.socket.emit('shotResponse', squareValueAndID);
+
+      //swap the turn values
+      this.alternateTurn();
     }
 
     //NEED TO RENAME THIS FUNCTION!
@@ -9651,7 +9687,7 @@ var GameContainer = function (_React$Component) {
   }, {
     key: 'handlePrimaryBoardClick',
     value: function handlePrimaryBoardClick(rowNum, squareNum) {
-      var _this2 = this;
+      var _this3 = this;
 
       //only do this if there are ships remaining to be placed
       if (this.state.shipsToBePlaced.length === 0) return;
@@ -9663,7 +9699,7 @@ var GameContainer = function (_React$Component) {
           prevState.primaryBoard.markSquareFull(rowNum, squareNum);
         } else {
           //remove it from the ship currently being placed, and empty square again
-          var indexOfPrevMarker = _this2.findIndexOfMarker(prevState, rowNum, squareNum);
+          var indexOfPrevMarker = _this3.findIndexOfMarker(prevState, rowNum, squareNum);
 
           // prevState.shipCurrentlyBeingPlaced
           prevState.shipCurrentlyBeingPlaced.splice(indexOfPrevMarker, 1);
@@ -9723,7 +9759,7 @@ var GameContainer = function (_React$Component) {
   }, {
     key: 'processValidPlacement',
     value: function processValidPlacement() {
-      var _this3 = this;
+      var _this4 = this;
 
       this.setState(function (prevState) {
         //remove the first item from the ships to be placed array, and add it to the squares occupied count
@@ -9737,14 +9773,14 @@ var GameContainer = function (_React$Component) {
           //if no further ships to place, remove the instruction panel and set player as ready to play
           prevState.readyToPlay = true;
           prevState.instructionDisplay = 'none';
-          if (_this3.state.opponentReadyToPlay) {
+          if (_this4.state.opponentReadyToPlay) {
             prevState.primaryPlayerInfo = 'Wait for opponent turn';
             prevState.opponentPlayerInfo = 'making their move';
           } else {
             prevState.primaryPlayerInfo = 'ready to play';
           }
 
-          _this3.socket.emit('readyToPlay', _this3.socket.id);
+          _this4.socket.emit('readyToPlay', _this4.socket.id);
         } else {
           //remove the error text
           prevState.errorText = '';
