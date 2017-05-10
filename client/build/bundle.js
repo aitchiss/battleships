@@ -9641,6 +9641,7 @@ var GameContainer = function (_React$Component) {
         var squareValue = this.state.primaryBoard.rows[row][square];
 
         this.socket.emit('shotResponse', squareValue);
+        this.alternateTurn();
       }
     }
 
@@ -9737,7 +9738,7 @@ var GameContainer = function (_React$Component) {
           prevState.readyToPlay = true;
           prevState.instructionDisplay = 'none';
           if (_this3.state.opponentReadyToPlay) {
-            prevState.primaryPlayerInfo = 'wait for opponent turn';
+            prevState.primaryPlayerInfo = 'Wait for opponent turn';
             prevState.opponentPlayerInfo = 'making their move';
           } else {
             prevState.primaryPlayerInfo = 'ready to play';
@@ -9758,6 +9759,7 @@ var GameContainer = function (_React$Component) {
     key: 'handleTrackingSquareClick',
     value: function handleTrackingSquareClick(rowNum, squareNum) {
       if (!this.state.readyToPlay || !this.state.opponentReadyToPlay) return;
+      if (!this.state.currentTurn) return;
       var coordsAndID = {
         id: this.state.socketID,
         row: rowNum,
@@ -9765,6 +9767,22 @@ var GameContainer = function (_React$Component) {
       };
       this.setState({ shotTaken: coordsAndID }, function () {
         this.socket.emit('shotTaken', coordsAndID);
+      });
+      this.alternateTurn();
+    }
+  }, {
+    key: 'alternateTurn',
+    value: function alternateTurn() {
+      this.setState(function (prevState) {
+        //flip to opposite turn
+        prevState.currentTurn = !prevState.currentTurn;
+        if (prevState.currentTurn) {
+          prevState.primaryPlayerInfo = 'Your turn!';
+          prevState.opponentPlayerInfo = 'Waiting on your shot';
+        } else {
+          prevState.primaryPlayerInfo = 'Wait for opponent turn';
+          prevState.opponentPlayerInfo = 'Taking their turn';
+        }
       });
     }
   }, {
@@ -30835,6 +30853,7 @@ var _react2 = _interopRequireDefault(_react);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var GamePlayInfo = function GamePlayInfo(props) {
+
   return _react2.default.createElement(
     "div",
     { className: "game-play-info" },

@@ -88,6 +88,7 @@ class GameContainer extends React.Component{
       let squareValue = this.state.primaryBoard.rows[row][square]
 
       this.socket.emit('shotResponse', squareValue)
+      this.alternateTurn()
     }
   }
 
@@ -173,7 +174,7 @@ class GameContainer extends React.Component{
         prevState.readyToPlay = true
         prevState.instructionDisplay = 'none'
         if(this.state.opponentReadyToPlay){
-          prevState.primaryPlayerInfo = 'wait for opponent turn'
+          prevState.primaryPlayerInfo = 'Wait for opponent turn'
           prevState.opponentPlayerInfo = 'making their move'
         } else {
           prevState.primaryPlayerInfo = 'ready to play'
@@ -195,6 +196,7 @@ class GameContainer extends React.Component{
 
   handleTrackingSquareClick(rowNum, squareNum){
     if (!this.state.readyToPlay || !this.state.opponentReadyToPlay) return
+    if (!this.state.currentTurn) return
     let coordsAndID = {
       id: this.state.socketID,
       row: rowNum,
@@ -203,8 +205,21 @@ class GameContainer extends React.Component{
     this.setState({shotTaken: coordsAndID}, function(){
       this.socket.emit('shotTaken', coordsAndID)
     })
+    this.alternateTurn()
+  }
 
-    
+  alternateTurn(){
+    this.setState((prevState) => {
+      //flip to opposite turn
+      prevState.currentTurn = !prevState.currentTurn
+      if (prevState.currentTurn){
+        prevState.primaryPlayerInfo = 'Your turn!'
+        prevState.opponentPlayerInfo = 'Waiting on your shot'
+      } else {
+        prevState.primaryPlayerInfo = 'Wait for opponent turn'
+        prevState.opponentPlayerInfo = 'Taking their turn'
+      }
+    })
   }
 
   render(){
@@ -214,7 +229,7 @@ class GameContainer extends React.Component{
         <div className="ship-placement-area">
           <BoardContainer size={this.state.primaryBoard.rows.length} boardStatus={this.state.primaryBoard} squareClickHandler={this.handlePrimaryBoardClick.bind(this)} title={"Your ships"}/>
           <ShipPlacementInstruction instruction={this.state.shipPlacementInstruction} buttonClickHandler={this.placeShipHandler.bind(this)} displayOption={this.state.instructionDisplay}/>
-          <GamePlayInfo text={this.state.primaryPlayerInfo}/>
+          <GamePlayInfo text={this.state.primaryPlayerInfo} />
         </div>
         <div className ="tracking-area">
           <BoardContainer size={this.state.primaryBoard.rows.length} boardStatus={this.state.trackingBoard} squareClickHandler={this.handleTrackingSquareClick.bind(this)} title={"Tracking board"}/>
