@@ -3,6 +3,7 @@ import Board from '../models/Board'
 import PlacementValidator from '../models/PlacementValidator'
 import BoardContainer from './BoardContainer'
 import ShipPlacementInstruction from '../components/ShipPlacementInstruction'
+import GamePlayInfo from '../components/GamePlayInfo'
 import io from 'socket.io-client'
 
 class GameContainer extends React.Component{
@@ -21,6 +22,8 @@ class GameContainer extends React.Component{
       errorText: '',
       primaryBoard: new Board(props.boardSize),
       trackingBoard: new Board(props.boardSize, 'tracking'),
+      primaryPlayerInfo: '',
+      opponentPlayerInfo: 'waiting for player',
       shotTaken: {
         row: null,
         square: null
@@ -48,7 +51,7 @@ class GameContainer extends React.Component{
 
   markOpponentReady(socketID){
     if(socketID !== this.state.socketID){
-      this.setState({opponentReadyToPlay: true})
+      this.setState({opponentReadyToPlay: true, opponentPlayerInfo: 'ready to play'})
     }
     
   }
@@ -164,6 +167,7 @@ class GameContainer extends React.Component{
         //if no further ships to place, remove the instruction panel and set player as ready to play
         prevState.readyToPlay = true
         prevState.instructionDisplay = 'none'
+        prevState.primaryPlayerInfo = 'ready to play'
         this.socket.emit('readyToPlay', this.socket.id)
       } else {
         //remove the error text
@@ -199,9 +203,11 @@ class GameContainer extends React.Component{
         <div className="ship-placement-area">
           <BoardContainer size={this.state.primaryBoard.rows.length} boardStatus={this.state.primaryBoard} squareClickHandler={this.handlePrimaryBoardClick.bind(this)} title={"Your ships"}/>
           <ShipPlacementInstruction instruction={this.state.shipPlacementInstruction} buttonClickHandler={this.placeShipHandler.bind(this)} displayOption={this.state.instructionDisplay}/>
+          <GamePlayInfo text={this.state.primaryPlayerInfo}/>
         </div>
         <div className ="tracking-area">
           <BoardContainer size={this.state.primaryBoard.rows.length} boardStatus={this.state.trackingBoard} squareClickHandler={this.handleTrackingSquareClick.bind(this)} title={"Tracking board"}/>
+          <GamePlayInfo text={this.state.opponentPlayerInfo}/>
         </div>
       </div>
 

@@ -9536,6 +9536,10 @@ var _ShipPlacementInstruction = __webpack_require__(207);
 
 var _ShipPlacementInstruction2 = _interopRequireDefault(_ShipPlacementInstruction);
 
+var _GamePlayInfo = __webpack_require__(240);
+
+var _GamePlayInfo2 = _interopRequireDefault(_GamePlayInfo);
+
 var _socket = __webpack_require__(231);
 
 var _socket2 = _interopRequireDefault(_socket);
@@ -9568,6 +9572,8 @@ var GameContainer = function (_React$Component) {
       errorText: '',
       primaryBoard: new _Board2.default(props.boardSize),
       trackingBoard: new _Board2.default(props.boardSize, 'tracking'),
+      primaryPlayerInfo: '',
+      opponentPlayerInfo: 'waiting for player',
       shotTaken: {
         row: null,
         square: null
@@ -9598,7 +9604,7 @@ var GameContainer = function (_React$Component) {
     key: 'markOpponentReady',
     value: function markOpponentReady(socketID) {
       if (socketID !== this.state.socketID) {
-        this.setState({ opponentReadyToPlay: true });
+        this.setState({ opponentReadyToPlay: true, opponentPlayerInfo: 'ready to play' });
       }
     }
   }, {
@@ -9725,6 +9731,7 @@ var GameContainer = function (_React$Component) {
           //if no further ships to place, remove the instruction panel and set player as ready to play
           prevState.readyToPlay = true;
           prevState.instructionDisplay = 'none';
+          prevState.primaryPlayerInfo = 'ready to play';
           _this3.socket.emit('readyToPlay', _this3.socket.id);
         } else {
           //remove the error text
@@ -9760,12 +9767,14 @@ var GameContainer = function (_React$Component) {
           'div',
           { className: 'ship-placement-area' },
           _react2.default.createElement(_BoardContainer2.default, { size: this.state.primaryBoard.rows.length, boardStatus: this.state.primaryBoard, squareClickHandler: this.handlePrimaryBoardClick.bind(this), title: "Your ships" }),
-          _react2.default.createElement(_ShipPlacementInstruction2.default, { instruction: this.state.shipPlacementInstruction, buttonClickHandler: this.placeShipHandler.bind(this), displayOption: this.state.instructionDisplay })
+          _react2.default.createElement(_ShipPlacementInstruction2.default, { instruction: this.state.shipPlacementInstruction, buttonClickHandler: this.placeShipHandler.bind(this), displayOption: this.state.instructionDisplay }),
+          _react2.default.createElement(_GamePlayInfo2.default, { text: this.state.primaryPlayerInfo })
         ),
         _react2.default.createElement(
           'div',
           { className: 'tracking-area' },
-          _react2.default.createElement(_BoardContainer2.default, { size: this.state.primaryBoard.rows.length, boardStatus: this.state.trackingBoard, squareClickHandler: this.handleTrackingSquareClick.bind(this), title: "Tracking board" })
+          _react2.default.createElement(_BoardContainer2.default, { size: this.state.primaryBoard.rows.length, boardStatus: this.state.trackingBoard, squareClickHandler: this.handleTrackingSquareClick.bind(this), title: "Tracking board" }),
+          _react2.default.createElement(_GamePlayInfo2.default, { text: this.state.opponentPlayerInfo })
         )
       );
     }
@@ -30796,6 +30805,37 @@ function toArray(list, index) {
 /***/ (function(module, exports) {
 
 /* (ignored) */
+
+/***/ }),
+/* 240 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(82);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var GamePlayInfo = function GamePlayInfo(props) {
+  return _react2.default.createElement(
+    "div",
+    { className: "game-play-info" },
+    _react2.default.createElement(
+      "p",
+      null,
+      props.text
+    )
+  );
+};
+
+exports.default = GamePlayInfo;
 
 /***/ })
 /******/ ]);
