@@ -9571,6 +9571,7 @@ var GameContainer = function (_React$Component) {
       }
     };
 
+    //socket listens for shots taken, and responses that detail player square's contents
     _this.socket = (0, _socket2.default)("http://localhost:3000");
     _this.socket.on('shotTaken', _this.processShot.bind(_this));
     _this.socket.on('shotResponse', _this.receiveShotResponse.bind(_this));
@@ -9618,8 +9619,8 @@ var GameContainer = function (_React$Component) {
     //placing own ships function
 
   }, {
-    key: 'markSquareFull',
-    value: function markSquareFull(rowNum, squareNum) {
+    key: 'handlePrimaryBoardClick',
+    value: function handlePrimaryBoardClick(rowNum, squareNum) {
       var _this2 = this;
 
       //only do this if there are ships remaining to be placed
@@ -9734,7 +9735,7 @@ var GameContainer = function (_React$Component) {
         _react2.default.createElement(
           'div',
           { className: 'ship-placement-area' },
-          _react2.default.createElement(_BoardContainer2.default, { size: this.state.primaryBoard.rows.length, boardStatus: this.state.primaryBoard, squareClickHandler: this.markSquareFull.bind(this), title: "Your ships" }),
+          _react2.default.createElement(_BoardContainer2.default, { size: this.state.primaryBoard.rows.length, boardStatus: this.state.primaryBoard, squareClickHandler: this.handlePrimaryBoardClick.bind(this), title: "Your ships" }),
           _react2.default.createElement(_ShipPlacementInstruction2.default, { instruction: this.state.shipPlacementInstruction, buttonClickHandler: this.placeShipHandler.bind(this), displayOption: this.state.instructionDisplay })
         ),
         _react2.default.createElement(

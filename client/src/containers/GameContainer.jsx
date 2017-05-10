@@ -24,6 +24,7 @@ class GameContainer extends React.Component{
       }
     }
 
+    //socket listens for shots taken, and responses that detail player square's contents
     this.socket = io("http://localhost:3000")
     this.socket.on('shotTaken', this.processShot.bind(this))
     this.socket.on('shotResponse', this.receiveShotResponse.bind(this))
@@ -65,7 +66,7 @@ class GameContainer extends React.Component{
 
   //NEED TO RENAME THIS FUNCTION!
   //placing own ships function
-  markSquareFull(rowNum, squareNum){
+  handlePrimaryBoardClick(rowNum, squareNum){
     //only do this if there are ships remaining to be placed
     if (this.state.shipsToBePlaced.length === 0) return
     
@@ -173,7 +174,7 @@ class GameContainer extends React.Component{
     return (
       <div className="game-container">
         <div className="ship-placement-area">
-          <BoardContainer size={this.state.primaryBoard.rows.length} boardStatus={this.state.primaryBoard} squareClickHandler={this.markSquareFull.bind(this)} title={"Your ships"}/>
+          <BoardContainer size={this.state.primaryBoard.rows.length} boardStatus={this.state.primaryBoard} squareClickHandler={this.handlePrimaryBoardClick.bind(this)} title={"Your ships"}/>
           <ShipPlacementInstruction instruction={this.state.shipPlacementInstruction} buttonClickHandler={this.placeShipHandler.bind(this)} displayOption={this.state.instructionDisplay}/>
         </div>
         <div className ="tracking-area">
