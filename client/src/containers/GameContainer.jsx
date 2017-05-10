@@ -62,6 +62,7 @@ class GameContainer extends React.Component{
     }
   }
 
+  //NEED TO RENAME THIS FUNCTION!
   //placing own ships function
   markSquareFull(rowNum, squareNum){
     //only do this if there are ships remaining to be placed
@@ -74,19 +75,23 @@ class GameContainer extends React.Component{
         prevState.primaryBoard.markSquareFull(rowNum, squareNum)
       } else {
         //remove it from the ship currently being placed, and empty square again
-        for (var i= 0; i < this.state.shipCurrentlyBeingPlaced.length; i++){
-          if (prevState.shipCurrentlyBeingPlaced[i][0] === rowNum && prevState.shipCurrentlyBeingPlaced[i][1] === squareNum){
-            console.log('splicing')
-            prevState.shipCurrentlyBeingPlaced = prevState.shipCurrentlyBeingPlaced.splice(i, 0)
-          }
-        }
+        let indexOfPrevMarker = this.findIndexOfMarker(prevState, rowNum, squareNum)
+
+        prevState.shipCurrentlyBeingPlaced = prevState.shipCurrentlyBeingPlaced.splice(indexOfPrevMarker, 0)
         prevState.primaryBoard.rows[rowNum][squareNum] = ''
       }
       return prevState
       
     })
-    
-    
+  }
+
+  //helper method used during placement of ships, if user wants to change marked square back to empty
+  findIndexOfMarker(prevState, rowNum, squareNum){
+    for (var i= 0; i < prevState.shipCurrentlyBeingPlaced.length; i++){
+      if (prevState.shipCurrentlyBeingPlaced[i][0] === rowNum && prevState.shipCurrentlyBeingPlaced[i][1] === squareNum){
+        return i
+      }
+    }
   }
 
   placeShipHandler(){

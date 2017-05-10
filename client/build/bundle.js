@@ -9613,6 +9613,7 @@ var GameContainer = function (_React$Component) {
       }
     }
 
+    //NEED TO RENAME THIS FUNCTION!
     //placing own ships function
 
   }, {
@@ -9630,16 +9631,25 @@ var GameContainer = function (_React$Component) {
           prevState.primaryBoard.markSquareFull(rowNum, squareNum);
         } else {
           //remove it from the ship currently being placed, and empty square again
-          for (var i = 0; i < _this2.state.shipCurrentlyBeingPlaced.length; i++) {
-            if (prevState.shipCurrentlyBeingPlaced[i][0] === rowNum && prevState.shipCurrentlyBeingPlaced[i][1] === squareNum) {
-              console.log('splicing');
-              prevState.shipCurrentlyBeingPlaced = prevState.shipCurrentlyBeingPlaced.splice(i, 0);
-            }
-          }
+          var indexOfPrevMarker = _this2.findIndexOfMarker(prevState, rowNum, squareNum);
+
+          prevState.shipCurrentlyBeingPlaced = prevState.shipCurrentlyBeingPlaced.splice(indexOfPrevMarker, 0);
           prevState.primaryBoard.rows[rowNum][squareNum] = '';
         }
         return prevState;
       });
+    }
+
+    //helper method used during placement of ships, if user wants to change marked square back to empty
+
+  }, {
+    key: 'findIndexOfMarker',
+    value: function findIndexOfMarker(prevState, rowNum, squareNum) {
+      for (var i = 0; i < prevState.shipCurrentlyBeingPlaced.length; i++) {
+        if (prevState.shipCurrentlyBeingPlaced[i][0] === rowNum && prevState.shipCurrentlyBeingPlaced[i][1] === squareNum) {
+          return i;
+        }
+      }
     }
   }, {
     key: 'placeShipHandler',
@@ -25725,7 +25735,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var ShipPlacementInstruction = function ShipPlacementInstruction(props) {
 
-  console.log(props);
   return _react2.default.createElement(
     "div",
     { className: "ship-placement", style: { display: props.displayOption } },

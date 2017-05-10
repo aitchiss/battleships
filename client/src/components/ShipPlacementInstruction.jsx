@@ -2,7 +2,7 @@ import React from 'react'
 
 const ShipPlacementInstruction = (props) => {
 
-  console.log(props)
+  
   return(
     <div className="ship-placement" style={{display: props.displayOption}} >
       <p>{props.instruction}</p>
