@@ -9667,43 +9667,51 @@ var GameContainer = function (_React$Component) {
       var currentlyOccupiedSquares = this.state.primaryBoard.getNumOfOccupiedSquares();
       var newTotalShipSquaresAllocated = this.state.shipSquaresAllocated + sizeOfShip;
 
-      //if placement valid
-      //AND if number of squares currently occupied is consistent with boats placed (no overlaps)
+      //if placement valid AND if number of squares currently occupied is consistent with boats placed (no overlaps)
       if (valid && currentlyOccupiedSquares === newTotalShipSquaresAllocated) {
-        this.setState(function (prevState) {
-          //remove the first item from the ships to be placed array, and add it to the squares occupied count
-          prevState.shipSquaresAllocated += prevState.shipsToBePlaced.shift();
-          //clears the placement coordinates
-          prevState.shipCurrentlyBeingPlaced = [];
-          //refreshes the instructions
-
-          //check if we need render new instructions
-          if (prevState.shipsToBePlaced.length === 0) {
-            //if no further ships to place, remove the instruction panel
-            prevState.instructionDisplay = 'none';
-          } else {
-            //remove the error text
-            prevState.errorText = '';
-            //create the new instruction
-            var newInstruction = 'click to place a ship of size: ' + prevState.shipsToBePlaced[0];
-            prevState.shipPlacementInstruction = newInstruction;
-          }
-          return prevState;
-        });
+        this.processValidPlacement();
       } else {
         //do this if the placement isn't valid
-
-        //check if there is already error text
-        if (this.state.shipPlacementInstruction.substring(0, 5) !== "Error") {
-          this.setState(function (prevState) {
-            prevState.errorText = 'Error: please ensure ship is of correct size, placed horizontally or vertically, and does not cross an existing ship. ';
-            var prevInstruction = prevState.shipPlacementInstruction;
-            var newInstruction = prevState.errorText + prevInstruction;
-            prevState.shipPlacementInstruction = newInstruction;
-            return prevState;
-          });
-        }
+        this.processPlacementError();
       }
+    }
+  }, {
+    key: 'processPlacementError',
+    value: function processPlacementError() {
+      //check if there is already error text
+      if (this.state.errorText === '') {
+        this.setState(function (prevState) {
+          prevState.errorText = 'Error: please ensure ship is of correct size, placed horizontally or vertically, and does not cross an existing ship. ';
+          var prevInstruction = prevState.shipPlacementInstruction;
+          var newInstruction = prevState.errorText + prevInstruction;
+          prevState.shipPlacementInstruction = newInstruction;
+          return prevState;
+        });
+      }
+    }
+  }, {
+    key: 'processValidPlacement',
+    value: function processValidPlacement() {
+      this.setState(function (prevState) {
+        //remove the first item from the ships to be placed array, and add it to the squares occupied count
+        prevState.shipSquaresAllocated += prevState.shipsToBePlaced.shift();
+        //clears the placement coordinates
+        prevState.shipCurrentlyBeingPlaced = [];
+        //refreshes the instructions
+
+        //check if we need render new instructions
+        if (prevState.shipsToBePlaced.length === 0) {
+          //if no further ships to place, remove the instruction panel
+          prevState.instructionDisplay = 'none';
+        } else {
+          //remove the error text
+          prevState.errorText = '';
+          //create the new instruction
+          var newInstruction = 'click to place a ship of size: ' + prevState.shipsToBePlaced[0];
+          prevState.shipPlacementInstruction = newInstruction;
+        }
+        return prevState;
+      });
     }
   }, {
     key: 'handleTrackingSquareClick',
