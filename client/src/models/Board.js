@@ -37,6 +37,16 @@ Board.prototype = {
   },
 
   checkIfBoardFull: function(){
+    var count = this.getNumOfOccupiedSquares()
+
+    if (count >= 17){
+      return true
+    } else {
+      return false
+    }
+  },
+
+  getNumOfOccupiedSquares(){
     var count = 0
     this.rows.forEach(function(row){
       row.forEach(function(square){
@@ -46,11 +56,7 @@ Board.prototype = {
       }.bind(this))
     }.bind(this))
 
-    if (count >= 17){
-      return true
-    } else {
-      return false
-    }
+    return count
   }
 
 

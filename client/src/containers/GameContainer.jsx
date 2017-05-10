@@ -80,9 +80,11 @@ class GameContainer extends React.Component{
     const valid = validator.validate(sizeOfShip, submittedShip)
     console.log('valid?', valid)
 
-    // if (sizeOfShip !== lengthOfSubmittedShip){
-    //   this.setState({shipPlacementInstruction: "Ship incorrect length. Please try again. Place ship of size: " + sizeOfShip})
-    // }
+    //if placement valid
+    //AND if number of squares currently occupied is consistent with boats placed (no overlaps)
+    //remove the first item from the ships to be placed array, and add it to the squares occupied count
+
+    //later will need some code to deal with the event when there are no further items in the ships to be placed array
     
   }
 

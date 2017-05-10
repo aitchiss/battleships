@@ -60,5 +60,12 @@ describe('Board tests:', function(){
     assert.strictEqual('?', board.rows[0][0])
   })
 
+  it('can return the number of squares currently occupied', function(){
+    var board = new Board(25)
+    board.rows[0] = ['x', 'x', 'x', 'x', 'x']
+    board.rows[1] = ['x', 'x', 'x', 'x', '']
+    assert.strictEqual(9, board.getNumOfOccupiedSquares())
+  })
+
 
 })

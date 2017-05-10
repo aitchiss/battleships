@@ -13101,9 +13101,11 @@ var GameContainer = function (_React$Component) {
       var valid = validator.validate(sizeOfShip, submittedShip);
       console.log('valid?', valid);
 
-      // if (sizeOfShip !== lengthOfSubmittedShip){
-      //   this.setState({shipPlacementInstruction: "Ship incorrect length. Please try again. Place ship of size: " + sizeOfShip})
-      // }
+      //if placement valid
+      //AND if number of squares currently occupied is consistent with boats placed (no overlaps)
+      //remove the first item from the ships to be placed array, and add it to the squares occupied count
+
+      //later will need some code to deal with the event when there are no further items in the ships to be placed array
     }
   }, {
     key: 'handleTrackingSquareClick',
@@ -13338,6 +13340,16 @@ Board.prototype = {
   },
 
   checkIfBoardFull: function checkIfBoardFull() {
+    var count = this.getNumOfOccupiedSquares();
+
+    if (count >= 17) {
+      return true;
+    } else {
+      return false;
+    }
+  },
+
+  getNumOfOccupiedSquares: function getNumOfOccupiedSquares() {
     var count = 0;
     this.rows.forEach(function (row) {
       row.forEach(function (square) {
@@ -13347,13 +13359,8 @@ Board.prototype = {
       }.bind(this));
     }.bind(this));
 
-    if (count >= 17) {
-      return true;
-    } else {
-      return false;
-    }
+    return count;
   }
-
 };
 
 module.exports = Board;
