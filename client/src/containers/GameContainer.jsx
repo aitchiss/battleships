@@ -58,18 +58,21 @@ class GameContainer extends React.Component{
 
       let squareValue = this.state.primaryBoard.rows[row][square]
 
-      console.log('process shot response current state', this.state.primaryBoard)
       this.socket.emit('shotResponse', squareValue)
     }
   }
 
   //placing own ships function
   markSquareFull(rowNum, squareNum){
-    this.setState((prevState) => {
-      prevState.shipCurrentlyBeingPlaced.push([rowNum, squareNum])
-      prevState.primaryBoard.markSquareFull(rowNum, squareNum)
-      return prevState
-    })
+    //only do this if there are ships remaining to be placed
+    if (this.state.shipsToBePlaced.length !== 0){
+      this.setState((prevState) => {
+        prevState.shipCurrentlyBeingPlaced.push([rowNum, squareNum])
+        prevState.primaryBoard.markSquareFull(rowNum, squareNum)
+        return prevState
+      })
+    }
+    
   }
 
   placeShipHandler(){
@@ -80,7 +83,6 @@ class GameContainer extends React.Component{
 
     const validator = new PlacementValidator()
     const valid = validator.validate(sizeOfShip, submittedShip)
-    console.log('valid?', valid)
 
     let currentlyOccupiedSquares = this.state.primaryBoard.getNumOfOccupiedSquares()
     let newTotalShipSquaresAllocated = this.state.shipSquaresAllocated + sizeOfShip
@@ -97,6 +99,7 @@ class GameContainer extends React.Component{
 
         //check if we need render new instructions
         if (prevState.shipsToBePlaced.length === 0){
+          //if no further ships to place, remove the instruction panel
           prevState.instructionDisplay = 'none'
         } else {
           var prevInstruction = prevState.shipPlacementInstruction
@@ -108,7 +111,7 @@ class GameContainer extends React.Component{
         return prevState
       })
     }
-    //later will need some code to deal with the event when there are no further items in the ships to be placed array
+   
     
   }
 
@@ -134,7 +137,9 @@ class GameContainer extends React.Component{
           <BoardContainer size={this.state.primaryBoard.rows.length} boardStatus={this.state.primaryBoard} squareClickHandler={this.markSquareFull.bind(this)} title={"Your ships"}/>
           <ShipPlacementInstruction instruction={this.state.shipPlacementInstruction} buttonClickHandler={this.placeShipHandler.bind(this)} displayOption={this.state.instructionDisplay}/>
         </div>
-        <BoardContainer size={this.state.primaryBoard.rows.length} boardStatus={this.state.trackingBoard} squareClickHandler={this.handleTrackingSquareClick.bind(this)} title={"Tracking board"}/>
+        <div className ="tracking-area">
+          <BoardContainer size={this.state.primaryBoard.rows.length} boardStatus={this.state.trackingBoard} squareClickHandler={this.handleTrackingSquareClick.bind(this)} title={"Tracking board"}/>
+        </div>
       </div>
 
     )

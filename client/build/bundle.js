@@ -9609,7 +9609,6 @@ var GameContainer = function (_React$Component) {
 
         var squareValue = this.state.primaryBoard.rows[row][square];
 
-        console.log('process shot response current state', this.state.primaryBoard);
         this.socket.emit('shotResponse', squareValue);
       }
     }
@@ -9619,11 +9618,14 @@ var GameContainer = function (_React$Component) {
   }, {
     key: 'markSquareFull',
     value: function markSquareFull(rowNum, squareNum) {
-      this.setState(function (prevState) {
-        prevState.shipCurrentlyBeingPlaced.push([rowNum, squareNum]);
-        prevState.primaryBoard.markSquareFull(rowNum, squareNum);
-        return prevState;
-      });
+      //only do this if there are ships remaining to be placed
+      if (this.state.shipsToBePlaced.length !== 0) {
+        this.setState(function (prevState) {
+          prevState.shipCurrentlyBeingPlaced.push([rowNum, squareNum]);
+          prevState.primaryBoard.markSquareFull(rowNum, squareNum);
+          return prevState;
+        });
+      }
     }
   }, {
     key: 'placeShipHandler',
@@ -9635,7 +9637,6 @@ var GameContainer = function (_React$Component) {
 
       var validator = new _PlacementValidator2.default();
       var valid = validator.validate(sizeOfShip, submittedShip);
-      console.log('valid?', valid);
 
       var currentlyOccupiedSquares = this.state.primaryBoard.getNumOfOccupiedSquares();
       var newTotalShipSquaresAllocated = this.state.shipSquaresAllocated + sizeOfShip;
@@ -9652,6 +9653,7 @@ var GameContainer = function (_React$Component) {
 
           //check if we need render new instructions
           if (prevState.shipsToBePlaced.length === 0) {
+            //if no further ships to place, remove the instruction panel
             prevState.instructionDisplay = 'none';
           } else {
             var prevInstruction = prevState.shipPlacementInstruction;
@@ -9662,7 +9664,6 @@ var GameContainer = function (_React$Component) {
           return prevState;
         });
       }
-      //later will need some code to deal with the event when there are no further items in the ships to be placed array
     }
   }, {
     key: 'handleTrackingSquareClick',
@@ -9688,7 +9689,11 @@ var GameContainer = function (_React$Component) {
           _react2.default.createElement(_BoardContainer2.default, { size: this.state.primaryBoard.rows.length, boardStatus: this.state.primaryBoard, squareClickHandler: this.markSquareFull.bind(this), title: "Your ships" }),
           _react2.default.createElement(_ShipPlacementInstruction2.default, { instruction: this.state.shipPlacementInstruction, buttonClickHandler: this.placeShipHandler.bind(this), displayOption: this.state.instructionDisplay })
         ),
-        _react2.default.createElement(_BoardContainer2.default, { size: this.state.primaryBoard.rows.length, boardStatus: this.state.trackingBoard, squareClickHandler: this.handleTrackingSquareClick.bind(this), title: "Tracking board" })
+        _react2.default.createElement(
+          'div',
+          { className: 'tracking-area' },
+          _react2.default.createElement(_BoardContainer2.default, { size: this.state.primaryBoard.rows.length, boardStatus: this.state.trackingBoard, squareClickHandler: this.handleTrackingSquareClick.bind(this), title: "Tracking board" })
+        )
       );
     }
   }]);
