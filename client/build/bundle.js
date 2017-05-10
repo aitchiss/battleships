@@ -9618,14 +9618,28 @@ var GameContainer = function (_React$Component) {
   }, {
     key: 'markSquareFull',
     value: function markSquareFull(rowNum, squareNum) {
+      var _this2 = this;
+
       //only do this if there are ships remaining to be placed
-      if (this.state.shipsToBePlaced.length !== 0) {
-        this.setState(function (prevState) {
+      if (this.state.shipsToBePlaced.length === 0) return;
+
+      this.setState(function (prevState) {
+        //check if square is to be marked full or changed to empty
+        if (prevState.primaryBoard.rows[rowNum][squareNum] === '') {
           prevState.shipCurrentlyBeingPlaced.push([rowNum, squareNum]);
           prevState.primaryBoard.markSquareFull(rowNum, squareNum);
-          return prevState;
-        });
-      }
+        } else {
+          //remove it from the ship currently being placed, and empty square again
+          for (var i = 0; i < _this2.state.shipCurrentlyBeingPlaced.length; i++) {
+            if (prevState.shipCurrentlyBeingPlaced[i][0] === rowNum && prevState.shipCurrentlyBeingPlaced[i][1] === squareNum) {
+              console.log('splicing');
+              prevState.shipCurrentlyBeingPlaced = prevState.shipCurrentlyBeingPlaced.splice(i, 0);
+            }
+          }
+          prevState.primaryBoard.rows[rowNum][squareNum] = '';
+        }
+        return prevState;
+      });
     }
   }, {
     key: 'placeShipHandler',
