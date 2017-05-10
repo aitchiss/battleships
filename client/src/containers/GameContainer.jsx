@@ -10,6 +10,7 @@ class GameContainer extends React.Component{
   constructor(props){
     super(props)
     this.state = {
+      readyToPlay: false,
       instructionDisplay: 'block',
       shipsToBePlaced: [5, 4, 3, 3, 2],
       shipSquaresAllocated: 0,
@@ -142,7 +143,8 @@ class GameContainer extends React.Component{
 
       //check if we need render new instructions
       if (prevState.shipsToBePlaced.length === 0){
-        //if no further ships to place, remove the instruction panel
+        //if no further ships to place, remove the instruction panel and set player as ready to play
+        prevState.readyToPlay = true
         prevState.instructionDisplay = 'none'
       } else {
         //remove the error text
@@ -158,6 +160,7 @@ class GameContainer extends React.Component{
  
 
   handleTrackingSquareClick(rowNum, squareNum){
+    if (!this.state.readyToPlay) return
     let coords = {
       row: rowNum,
       square: squareNum
