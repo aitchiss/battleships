@@ -130,13 +130,18 @@ class GameContainer extends React.Component{
       })
     } else {
       //do this if the placement isn't valid
-      this.setState((prevState) => {
-        const errorText = 'Error: please ensure ship is of correct size, placed horizontally or vertically, and does not cross an existing ship. '
-        let prevInstruction = prevState.shipPlacementInstruction
-        let newInstruction = errorText + prevInstruction
-        prevState.shipPlacementInstruction = newInstruction
-        return prevState
-      })
+
+      //check if there is already error text
+      if (this.state.shipPlacementInstruction.substring(0, 5) !== "Error"){
+        this.setState((prevState) => {
+          const errorText = 'Error: please ensure ship is of correct size, placed horizontally or vertically, and does not cross an existing ship. '
+          let prevInstruction = prevState.shipPlacementInstruction
+          let newInstruction = errorText + prevInstruction
+          prevState.shipPlacementInstruction = newInstruction
+          return prevState
+        })
+      }
+      
     }
    
     

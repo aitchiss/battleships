@@ -9689,13 +9689,17 @@ var GameContainer = function (_React$Component) {
         });
       } else {
         //do this if the placement isn't valid
-        this.setState(function (prevState) {
-          var errorText = 'Error: please ensure ship is of correct size, placed horizontally or vertically, and does not cross an existing ship. ';
-          var prevInstruction = prevState.shipPlacementInstruction;
-          var newInstruction = errorText + prevInstruction;
-          prevState.shipPlacementInstruction = newInstruction;
-          return prevState;
-        });
+
+        //check if there is already error text
+        if (this.state.shipPlacementInstruction.substring(0, 5) !== "Error") {
+          this.setState(function (prevState) {
+            var errorText = 'Error: please ensure ship is of correct size, placed horizontally or vertically, and does not cross an existing ship. ';
+            var prevInstruction = prevState.shipPlacementInstruction;
+            var newInstruction = errorText + prevInstruction;
+            prevState.shipPlacementInstruction = newInstruction;
+            return prevState;
+          });
+        }
       }
     }
   }, {
