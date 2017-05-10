@@ -21,3 +21,8 @@
 .board{
   margin: 20px;
 }
+
+.ship-placement {
+  margin: 20px;
+  width: 420px;
+}

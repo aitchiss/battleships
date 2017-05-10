@@ -79,7 +79,6 @@ class GameContainer extends React.Component{
 
         // prevState.shipCurrentlyBeingPlaced
         prevState.shipCurrentlyBeingPlaced.splice(indexOfPrevMarker, 1)
-        
         prevState.primaryBoard.rows[rowNum][squareNum] = ''
       }
       return prevState
@@ -123,12 +122,19 @@ class GameContainer extends React.Component{
           //if no further ships to place, remove the instruction panel
           prevState.instructionDisplay = 'none'
         } else {
-          var prevInstruction = prevState.shipPlacementInstruction
-          var newInstruction = prevInstruction.substring(0, prevInstruction.length - 1) + prevState.shipsToBePlaced[0]
+          let prevInstruction = prevState.shipPlacementInstruction
+          let newInstruction = prevInstruction.substring(0, prevInstruction.length - 1) + prevState.shipsToBePlaced[0]
           prevState.shipPlacementInstruction = newInstruction
         }
-        
-        
+        return prevState
+      })
+    } else {
+      //do this if the placement isn't valid
+      this.setState((prevState) => {
+        const errorText = 'Error: please ensure ship is of correct size, placed horizontally or vertically, and does not cross an existing ship. '
+        let prevInstruction = prevState.shipPlacementInstruction
+        let newInstruction = errorText + prevInstruction
+        prevState.shipPlacementInstruction = newInstruction
         return prevState
       })
     }
