@@ -179,7 +179,7 @@ class GameContainer extends React.Component{
  
 
   handleTrackingSquareClick(rowNum, squareNum){
-    if (!this.state.readyToPlay) return
+    if (!this.state.readyToPlay || !this.state.opponentReadyToPlay) return
     let coordsAndID = {
       id: this.state.socketID,
       row: rowNum,

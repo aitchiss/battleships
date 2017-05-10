@@ -9739,7 +9739,7 @@ var GameContainer = function (_React$Component) {
   }, {
     key: 'handleTrackingSquareClick',
     value: function handleTrackingSquareClick(rowNum, squareNum) {
-      if (!this.state.readyToPlay) return;
+      if (!this.state.readyToPlay || !this.state.opponentReadyToPlay) return;
       var coordsAndID = {
         id: this.state.socketID,
         row: rowNum,
