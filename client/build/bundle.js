@@ -9655,6 +9655,8 @@ var GameContainer = function (_React$Component) {
   }, {
     key: 'placeShipHandler',
     value: function placeShipHandler() {
+      var _this3 = this;
+
       //needs to use validator, and also check each time that the correct number of squares are occupied. If not, there is an overlap in ships - not allowed
 
       var sizeOfShip = this.state.shipsToBePlaced[0];
@@ -9670,6 +9672,11 @@ var GameContainer = function (_React$Component) {
       //AND if number of squares currently occupied is consistent with boats placed (no overlaps)
       if (valid && currentlyOccupiedSquares === newTotalShipSquaresAllocated) {
         this.setState(function (prevState) {
+          //chop off the error text if present
+          if (_this3.state.shipPlacementInstruction.substring(0, 5) === "Error") {
+            prevState.shipPlacementInstruction = prevState.shipPlacementInstruction.substring(118, prevState.shipPlacementInstruction.length);
+          }
+
           //remove the first item from the ships to be placed array, and add it to the squares occupied count
           prevState.shipSquaresAllocated += prevState.shipsToBePlaced.shift();
           //clears the placement coordinates

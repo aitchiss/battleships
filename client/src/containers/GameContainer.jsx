@@ -111,6 +111,11 @@ class GameContainer extends React.Component{
     //AND if number of squares currently occupied is consistent with boats placed (no overlaps)
     if(valid && currentlyOccupiedSquares === newTotalShipSquaresAllocated){
       this.setState((prevState) => {
+        //chop off the error text if present
+        if (this.state.shipPlacementInstruction.substring(0, 5) === "Error"){
+          prevState.shipPlacementInstruction = prevState.shipPlacementInstruction.substring(118, prevState.shipPlacementInstruction.length)
+        }
+
         //remove the first item from the ships to be placed array, and add it to the squares occupied count
         prevState.shipSquaresAllocated += prevState.shipsToBePlaced.shift()
         //clears the placement coordinates
