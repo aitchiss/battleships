@@ -77,7 +77,9 @@ class GameContainer extends React.Component{
         //remove it from the ship currently being placed, and empty square again
         let indexOfPrevMarker = this.findIndexOfMarker(prevState, rowNum, squareNum)
 
-        prevState.shipCurrentlyBeingPlaced = prevState.shipCurrentlyBeingPlaced.splice(indexOfPrevMarker, 0)
+        // prevState.shipCurrentlyBeingPlaced
+        prevState.shipCurrentlyBeingPlaced.splice(indexOfPrevMarker, 1)
+        
         prevState.primaryBoard.rows[rowNum][squareNum] = ''
       }
       return prevState

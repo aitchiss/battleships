@@ -9633,7 +9633,9 @@ var GameContainer = function (_React$Component) {
           //remove it from the ship currently being placed, and empty square again
           var indexOfPrevMarker = _this2.findIndexOfMarker(prevState, rowNum, squareNum);
 
-          prevState.shipCurrentlyBeingPlaced = prevState.shipCurrentlyBeingPlaced.splice(indexOfPrevMarker, 0);
+          // prevState.shipCurrentlyBeingPlaced
+          prevState.shipCurrentlyBeingPlaced.splice(indexOfPrevMarker, 1);
+
           prevState.primaryBoard.rows[rowNum][squareNum] = '';
         }
         return prevState;
