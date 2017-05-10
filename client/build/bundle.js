@@ -9620,11 +9620,12 @@ var GameContainer = function (_React$Component) {
     }
   }, {
     key: 'processShot',
-    value: function processShot(coords) {
+    value: function processShot(coordsAndID) {
       //if statement to check that the other player made the shot, and we need to respond
-      if (this.state.shotTaken.row === null) {
-        var row = coords.row;
-        var square = coords.square;
+
+      if (coordsAndID.id !== this.state.socketID) {
+        var row = coordsAndID.row;
+        var square = coordsAndID.square;
 
         var squareValue = this.state.primaryBoard.rows[row][square];
 
@@ -9739,12 +9740,13 @@ var GameContainer = function (_React$Component) {
     key: 'handleTrackingSquareClick',
     value: function handleTrackingSquareClick(rowNum, squareNum) {
       if (!this.state.readyToPlay) return;
-      var coords = {
+      var coordsAndID = {
+        id: this.state.socketID,
         row: rowNum,
         square: squareNum
       };
-      this.setState({ shotTaken: coords }, function () {
-        this.socket.emit('shotTaken', coords);
+      this.setState({ shotTaken: coordsAndID }, function () {
+        this.socket.emit('shotTaken', coordsAndID);
       });
     }
   }, {

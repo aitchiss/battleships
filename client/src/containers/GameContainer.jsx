@@ -70,11 +70,12 @@ class GameContainer extends React.Component{
    
   }
 
-  processShot(coords){
+  processShot(coordsAndID){
     //if statement to check that the other player made the shot, and we need to respond
-    if (this.state.shotTaken.row === null){
-      let row = coords.row
-      let square = coords.square
+    
+    if (coordsAndID.id !== this.state.socketID){
+      let row = coordsAndID.row
+      let square = coordsAndID.square
 
       let squareValue = this.state.primaryBoard.rows[row][square]
 
@@ -179,12 +180,13 @@ class GameContainer extends React.Component{
 
   handleTrackingSquareClick(rowNum, squareNum){
     if (!this.state.readyToPlay) return
-    let coords = {
+    let coordsAndID = {
+      id: this.state.socketID,
       row: rowNum,
       square: squareNum
     }
-    this.setState({shotTaken: coords}, function(){
-      this.socket.emit('shotTaken', coords)
+    this.setState({shotTaken: coordsAndID}, function(){
+      this.socket.emit('shotTaken', coordsAndID)
     })
 
     
