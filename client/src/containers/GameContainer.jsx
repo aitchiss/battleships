@@ -13,7 +13,6 @@ class GameContainer extends React.Component{
     this.state = {
       socketID: null,
       readyToPlay: false,
-      gameOver: false,
       currentTurn: null,
       opponentReadyToPlay: false,
       instructionDisplay: 'block',
@@ -47,11 +46,20 @@ class GameContainer extends React.Component{
     this.socket.on('shotTaken', this.processShot.bind(this))
     this.socket.on('shotResponse', this.receiveShotResponse.bind(this))
     this.socket.on('readyToPlay', this.markOpponentReady.bind(this))
+    this.socket.on('win', this.gameOver.bind(this))
   }
 
   componentDidMount(){
     const sizeOfFirstShip = this.state.shipsToBePlaced[0]
     this.setState({shipPlacementInstruction: "Click to place a ship of size: " + sizeOfFirstShip})
+  }
+
+  gameOver(id){
+    if (id === this.state.socketID){
+      this.setState({readyToPlay: false, primaryPlayerInfo: 'You win!', opponentPlayerInfo: 'Opponent loses'})
+    } else {
+      this.setState({readyToPlay: false, primaryPlayerInfo: 'You lose!', opponentPlayerInfo: 'Opponent wins'})
+    }
   }
 
   markOpponentReady(socketID){
@@ -77,25 +85,17 @@ class GameContainer extends React.Component{
       }
       if(squareValue === 'x'){
         prevState.hitsScored = prevState.hitsScored + 1
-        
+        if (prevState.hitsScored === 17){
+          this.socket.emit('win', this.state.socketID)
+        }
       }
       return prevState
-      this.checkIfWon()
+      // this.checkIfWon()
     })
    
   }
 
-  checkIfLost(){
-    if (this.state.hitsTaken === 17){
-      this.setState({gameOver: true, primaryPlayerInfo: 'You lose!', opponentPlayerInfo: 'Opponent wins'})
-    }
-  }
 
-  checkIfWon(){
-    if (this.state.hitsScored === 17){
-      this.setState({gameOver: true, primaryPlayerInfo: 'You win!', opponentPlayerInfo: 'Opponent loses'})
-    }
-  }
 
   processShot(coordsAndID){
     //check that the other player made the shot, and we need to respond
@@ -111,7 +111,6 @@ class GameContainer extends React.Component{
         prevState.hitsTaken = prevState.hitsTaken + 1
         return prevState
       })
-      this.checkIfLost()
     }
 
     let squareValueAndID = {
@@ -215,7 +214,7 @@ class GameContainer extends React.Component{
           prevState.primaryPlayerInfo = 'ready to play'
         }
         
-        this.socket.emit('readyToPlay', this.socket.id)
+        this.socket.emit('readyToPlay', this.state.socketID)
       } else {
         //remove the error text
         prevState.errorText = ''

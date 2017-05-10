@@ -11,17 +11,19 @@ app.use(express.static('client/build'))
 
 io.on('connection', function(socket){
   socket.on('shotTaken', (coords) => {
-
     io.sockets.emit('shotTaken', coords)
   })
 
   socket.on('shotResponse', (squareValueAndID) => {
-
     io.sockets.emit('shotResponse', squareValueAndID)
   })
 
   socket.on('readyToPlay', (id) => {
     io.sockets.emit('readyToPlay', id)
+  })
+
+  socket.on('win', (id) => {
+    io.sockets.emit('win', id)
   })
 
 })
