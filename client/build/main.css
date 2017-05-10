@@ -26,3 +26,12 @@
   margin: 20px;
   width: 420px;
 }
+
+.ship-placement button{
+  background-color: #FF8700;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  padding: 10px;
+  font-size: 1em;
+}

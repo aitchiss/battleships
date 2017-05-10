@@ -31,7 +31,7 @@ class GameContainer extends React.Component{
 
   componentDidMount(){
     const sizeOfFirstShip = this.state.shipsToBePlaced[0]
-    this.setState({shipPlacementInstruction: "click to place a ship of size: " + sizeOfFirstShip})
+    this.setState({shipPlacementInstruction: "Click to place a ship of size: " + sizeOfFirstShip})
   }
 
   receiveShotResponse(squareValue){
@@ -147,7 +147,7 @@ class GameContainer extends React.Component{
         //remove the error text
         prevState.errorText = ''
         //create the new instruction
-        let newInstruction = 'click to place a ship of size: ' + prevState.shipsToBePlaced[0]
+        let newInstruction = 'Click to place a ship of size: ' + prevState.shipsToBePlaced[0]
         prevState.shipPlacementInstruction = newInstruction
       }
       return prevState

@@ -6,7 +6,7 @@ const ShipPlacementInstruction = (props) => {
   return(
     <div className="ship-placement" style={{display: props.displayOption}} >
       <p>{props.instruction}</p>
-      <button onClick={props.buttonClickHandler}>Place ship</button>
+      <button onClick={props.buttonClickHandler}>confirm ship</button>
     </div>
   )
 }
