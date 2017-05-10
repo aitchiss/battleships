@@ -13,6 +13,7 @@ class GameContainer extends React.Component{
     this.state = {
       socketID: null,
       readyToPlay: false,
+      currentTurn: null,
       opponentReadyToPlay: false,
       instructionDisplay: 'block',
       shipsToBePlaced: [5, 4, 3, 3, 2],
@@ -52,6 +53,10 @@ class GameContainer extends React.Component{
   markOpponentReady(socketID){
     if(socketID !== this.state.socketID){
       this.setState({opponentReadyToPlay: true, opponentPlayerInfo: 'ready to play'})
+
+      if(this.state.readyToPlay){
+        this.setState({currentTurn: true, primaryPlayerInfo: 'Your turn!'})
+      }
     }
     
   }
@@ -167,7 +172,13 @@ class GameContainer extends React.Component{
         //if no further ships to place, remove the instruction panel and set player as ready to play
         prevState.readyToPlay = true
         prevState.instructionDisplay = 'none'
-        prevState.primaryPlayerInfo = 'ready to play'
+        if(this.state.opponentReadyToPlay){
+          prevState.primaryPlayerInfo = 'wait for opponent turn'
+          prevState.opponentPlayerInfo = 'making their move'
+        } else {
+          prevState.primaryPlayerInfo = 'ready to play'
+        }
+        
         this.socket.emit('readyToPlay', this.socket.id)
       } else {
         //remove the error text

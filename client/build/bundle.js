@@ -9563,6 +9563,7 @@ var GameContainer = function (_React$Component) {
     _this.state = {
       socketID: null,
       readyToPlay: false,
+      currentTurn: null,
       opponentReadyToPlay: false,
       instructionDisplay: 'block',
       shipsToBePlaced: [5, 4, 3, 3, 2],
@@ -9605,6 +9606,10 @@ var GameContainer = function (_React$Component) {
     value: function markOpponentReady(socketID) {
       if (socketID !== this.state.socketID) {
         this.setState({ opponentReadyToPlay: true, opponentPlayerInfo: 'ready to play' });
+
+        if (this.state.readyToPlay) {
+          this.setState({ currentTurn: true, primaryPlayerInfo: 'Your turn!' });
+        }
       }
     }
   }, {
@@ -9731,7 +9736,13 @@ var GameContainer = function (_React$Component) {
           //if no further ships to place, remove the instruction panel and set player as ready to play
           prevState.readyToPlay = true;
           prevState.instructionDisplay = 'none';
-          prevState.primaryPlayerInfo = 'ready to play';
+          if (_this3.state.opponentReadyToPlay) {
+            prevState.primaryPlayerInfo = 'wait for opponent turn';
+            prevState.opponentPlayerInfo = 'making their move';
+          } else {
+            prevState.primaryPlayerInfo = 'ready to play';
+          }
+
           _this3.socket.emit('readyToPlay', _this3.socket.id);
         } else {
           //remove the error text
