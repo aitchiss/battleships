@@ -10,9 +10,3 @@ echo "starting server..."
 cd ".."
 npm start
 
-echo "opening player 1 and player 2 browser windows..."
-
-open http://localhost:3000
-open http://localhost:3000
-
-echo "finished"
