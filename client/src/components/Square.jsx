@@ -19,15 +19,11 @@ const Square = (props) => {
   }
 
   let colour = determineColour(props.squareStatus)
-
   
   return(
     <div className="square" style={{backgroundColor: colour}} onClick={onSquareClick.bind(this)}>
-      
     </div>
   )
-  
-  
 
 }
 

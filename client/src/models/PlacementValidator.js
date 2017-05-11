@@ -15,7 +15,7 @@ PlacementValidator.prototype = {
     var valid = (inRow || inColumn)
     if (!valid) return false
 
-    //check for validate sequential placement within row or column
+    //validate sequential placement within row or column
     if (inRow){
       valid = this.checkRow(coords)
     } else {
@@ -25,6 +25,32 @@ PlacementValidator.prototype = {
     return valid
   },
 
+  isInOneRow: function(coords){
+    var row = coords[0][0]
+    var numInSameRow = 0
+
+    for (var i = 0; i < coords.length; i++){
+      if (coords[i][0] === row){
+        numInSameRow++
+      }
+    } 
+    if (numInSameRow !== coords.length) return false
+    return true
+  },
+
+  isInOneColumn: function(coords){
+    var col = coords[0][1]
+    var numInSameCol = 0
+
+    for (var i = 0; i < coords.length; i++){
+      if (coords[i][1] === col){
+        numInSameCol++
+      }
+    } 
+    if (numInSameCol !== coords.length) return false
+    return true
+  },
+
   //checks for ships placed in a row if the squares are in sequential columns
   checkRow: function(coords){
     var columns = []
@@ -32,8 +58,15 @@ PlacementValidator.prototype = {
     coords.forEach(function(square){
       columns.push(square[1])
     }.bind(this))
-
     return this.checkIfSequential(columns)
+  },
+
+  checkColumn: function(coords){
+    var rows = []
+    coords.forEach(function(square){
+      rows.push(square[0])
+    }.bind(this)) 
+    return this.checkIfSequential(rows) 
   },
 
   //helper method to check if a collection of row/column references are in direct sequence
@@ -47,46 +80,6 @@ PlacementValidator.prototype = {
       }
     }
     return sequential
-  },
-
-  checkColumn: function(coords){
-    var rows = []
-
-    coords.forEach(function(square){
-      rows.push(square[0])
-    }.bind(this)) 
-    
-    return this.checkIfSequential(rows) 
-  },
-
-  isInOneRow: function(coords){
-    var row = coords[0][0]
-    var numInSameRow = 0
-
-    for (var i = 0; i < coords.length; i++){
-      if (coords[i][0] === row){
-        numInSameRow++
-      }
-    } 
-
-    if (numInSameRow !== coords.length) return false
-    return true
-
-  },
-
-  isInOneColumn: function(coords){
-    
-    var col = coords[0][1]
-    var numInSameCol = 0
-
-    for (var i = 0; i < coords.length; i++){
-      if (coords[i][1] === col){
-        numInSameCol++
-      }
-    } 
-    
-    if (numInSameCol !== coords.length) return false
-    return true
   }
 }
 

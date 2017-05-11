@@ -13512,14 +13512,14 @@ exports.default = Square;
 
 var Board = function Board(numOfSquares, type) {
 
+  //checks the size of board to create, and throws error if it doesn't make a grid
   var noOfRows = Math.sqrt(numOfSquares);
-
   if (numOfSquares < 0 || noOfRows % 1 !== 0) {
     throw new Error("number of squares must make a grid");
   }
 
   this.rows = [];
-
+  //creates rows and adds to the array
   for (var i = 0; i < noOfRows; i++) {
     var newRow = this.createNewRow(noOfRows, type);
     this.rows[i] = newRow;
@@ -13532,6 +13532,7 @@ Board.prototype = {
     var row = [];
     for (var i = 0; i < size; i++) {
       if (type === 'tracking') {
+        //distinguish between unknown square and empty square
         var initialSquare = '?';
       } else {
         var initialSquare = '';
@@ -13595,7 +13596,7 @@ PlacementValidator.prototype = {
     var valid = inRow || inColumn;
     if (!valid) return false;
 
-    //check for validate sequential placement within row or column
+    //validate sequential placement within row or column
     if (inRow) {
       valid = this.checkRow(coords);
     } else {
@@ -13605,6 +13606,32 @@ PlacementValidator.prototype = {
     return valid;
   },
 
+  isInOneRow: function isInOneRow(coords) {
+    var row = coords[0][0];
+    var numInSameRow = 0;
+
+    for (var i = 0; i < coords.length; i++) {
+      if (coords[i][0] === row) {
+        numInSameRow++;
+      }
+    }
+    if (numInSameRow !== coords.length) return false;
+    return true;
+  },
+
+  isInOneColumn: function isInOneColumn(coords) {
+    var col = coords[0][1];
+    var numInSameCol = 0;
+
+    for (var i = 0; i < coords.length; i++) {
+      if (coords[i][1] === col) {
+        numInSameCol++;
+      }
+    }
+    if (numInSameCol !== coords.length) return false;
+    return true;
+  },
+
   //checks for ships placed in a row if the squares are in sequential columns
   checkRow: function checkRow(coords) {
     var columns = [];
@@ -13612,8 +13639,15 @@ PlacementValidator.prototype = {
     coords.forEach(function (square) {
       columns.push(square[1]);
     }.bind(this));
-
     return this.checkIfSequential(columns);
+  },
+
+  checkColumn: function checkColumn(coords) {
+    var rows = [];
+    coords.forEach(function (square) {
+      rows.push(square[0]);
+    }.bind(this));
+    return this.checkIfSequential(rows);
   },
 
   //helper method to check if a collection of row/column references are in direct sequence
@@ -13627,45 +13661,6 @@ PlacementValidator.prototype = {
       }
     }
     return sequential;
-  },
-
-  checkColumn: function checkColumn(coords) {
-    var rows = [];
-
-    coords.forEach(function (square) {
-      rows.push(square[0]);
-    }.bind(this));
-
-    return this.checkIfSequential(rows);
-  },
-
-  isInOneRow: function isInOneRow(coords) {
-    var row = coords[0][0];
-    var numInSameRow = 0;
-
-    for (var i = 0; i < coords.length; i++) {
-      if (coords[i][0] === row) {
-        numInSameRow++;
-      }
-    }
-
-    if (numInSameRow !== coords.length) return false;
-    return true;
-  },
-
-  isInOneColumn: function isInOneColumn(coords) {
-
-    var col = coords[0][1];
-    var numInSameCol = 0;
-
-    for (var i = 0; i < coords.length; i++) {
-      if (coords[i][1] === col) {
-        numInSameCol++;
-      }
-    }
-
-    if (numInSameCol !== coords.length) return false;
-    return true;
   }
 };
 
