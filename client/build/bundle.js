@@ -13045,19 +13045,19 @@ var GameContainer = function (_React$Component) {
         row: null,
         square: null
       },
-      //stats for how many hits on target, and how many sustained
       hitsTaken: 0,
       hitsScored: 0
     };
 
-    //socket listens for shots taken, and responses that detail player square's contents
+    //socket listens for shots taken, and responses that detail player square's contents. Also checks when players are ready to play and if the game has been won.
     _this.socket = (0, _socket2.default)("http://localhost:3000");
 
-    //on connection, store our own socket id
+    //on connection, stores own socket id, so it can distinguish between the two players
     _this.socket.on('connect', function () {
       _this.setState({ socketID: _this.socket.id });
     });
 
+    //listeners and handlers for socket events
     _this.socket.on('shotTaken', _this.processShot.bind(_this));
     _this.socket.on('shotResponse', _this.receiveShotResponse.bind(_this));
     _this.socket.on('readyToPlay', _this.markOpponentReady.bind(_this));
@@ -13065,11 +13065,150 @@ var GameContainer = function (_React$Component) {
     return _this;
   }
 
+  //on load, render the ship placement instructions
+
+
   _createClass(GameContainer, [{
     key: 'componentDidMount',
     value: function componentDidMount() {
       var sizeOfFirstShip = this.state.shipsToBePlaced[0];
       this.setState({ shipPlacementInstruction: "Click to place a ship of size: " + sizeOfFirstShip });
+    }
+
+    //handles a click on the primary board, i.e. for placement of own ships
+
+  }, {
+    key: 'handlePrimaryBoardClick',
+    value: function handlePrimaryBoardClick(rowNum, squareNum) {
+      var _this2 = this;
+
+      //only do this if there are ships remaining to be placed
+      if (this.state.shipsToBePlaced.length === 0) return;
+
+      this.setState(function (prevState) {
+        //check if square is to be marked full (and added to current ship array) or changed back to empty
+        if (prevState.primaryBoard.rows[rowNum][squareNum] === '') {
+          prevState.shipCurrentlyBeingPlaced.push([rowNum, squareNum]);
+          prevState.primaryBoard.markSquareFull(rowNum, squareNum);
+        } else {
+          //check where we need to remove the marker from the ship currently being placed
+          var indexOfPrevMarker = _this2.findIndexOfMarker(prevState, rowNum, squareNum);
+          //only allow changes if the ship is the one being currently placed (not already confirmed)
+          if (indexOfPrevMarker !== -1) {
+            //remove it from the ship currently being placed, and empty square again
+            prevState.shipCurrentlyBeingPlaced.splice(indexOfPrevMarker, 1);
+            prevState.primaryBoard.rows[rowNum][squareNum] = '';
+          }
+        }
+        return prevState;
+      });
+    }
+
+    //helper method used by handlePrimaryBoardClick
+
+  }, {
+    key: 'findIndexOfMarker',
+    value: function findIndexOfMarker(prevState, rowNum, squareNum) {
+      var index = -1;
+      for (var i = 0; i < prevState.shipCurrentlyBeingPlaced.length; i++) {
+        if (prevState.shipCurrentlyBeingPlaced[i][0] === rowNum && prevState.shipCurrentlyBeingPlaced[i][1] === squareNum) {
+          index = i;
+        }
+      }
+      return index;
+    }
+
+    //handles the confirm ship placement button click
+
+  }, {
+    key: 'placeShipHandler',
+    value: function placeShipHandler() {
+      var validator = new _PlacementValidator2.default();
+
+      var sizeOfShip = this.state.shipsToBePlaced[0];
+      var submittedShip = this.state.shipCurrentlyBeingPlaced;
+      //returns a boolean to let us know if placement is consecutive squares in row or column
+      var valid = validator.validate(sizeOfShip, submittedShip);
+
+      //checks that there are no overlaps with previous ships - i.e. the correct total number of squares are occupied
+      var currentlyOccupiedSquares = this.state.primaryBoard.getNumOfOccupiedSquares();
+      var newTotalShipSquaresAllocated = this.state.shipSquaresAllocated + sizeOfShip;
+
+      if (valid && currentlyOccupiedSquares === newTotalShipSquaresAllocated) {
+        this.processValidPlacement();
+      } else {
+        this.processPlacementError();
+      }
+    }
+
+    //called by placeShipHandler - confirms placement of ship
+
+  }, {
+    key: 'processValidPlacement',
+    value: function processValidPlacement() {
+      var _this3 = this;
+
+      this.setState(function (prevState) {
+        //update number of squares successfully occupied
+        prevState.shipSquaresAllocated += prevState.shipsToBePlaced.shift();
+        //clear the ship placement coordinates
+        prevState.shipCurrentlyBeingPlaced = [];
+
+        //check if we need render new instructions
+        if (prevState.shipsToBePlaced.length === 0) {
+
+          // no further ships to place, remove the instruction panel and set player as ready to play
+          prevState.readyToPlay = true;
+          prevState.instructionDisplay = 'none';
+
+          if (_this3.state.opponentReadyToPlay) {
+            prevState.primaryPlayerInfo = 'Wait for opponent turn';
+            prevState.opponentPlayerInfo = 'making their move';
+          } else {
+            prevState.primaryPlayerInfo = 'ready to play';
+          }
+
+          _this3.socket.emit('readyToPlay', _this3.state.socketID);
+        } else {
+          //remove any error text
+          prevState.errorText = '';
+          //create the new instruction
+          var newInstruction = 'Click to place a ship of size: ' + prevState.shipsToBePlaced[0];
+          prevState.shipPlacementInstruction = newInstruction;
+        }
+        return prevState;
+      });
+    }
+
+    //called if user tries to make an invalid ship placement
+
+  }, {
+    key: 'processPlacementError',
+    value: function processPlacementError() {
+      //check if there is already error text rendered
+      if (this.state.errorText === '') {
+        this.setState(function (prevState) {
+          prevState.errorText = 'Error: please ensure ship is of correct size, placed horizontally or vertically, and does not cross an existing ship. ';
+          var prevInstruction = prevState.shipPlacementInstruction;
+          var newInstruction = prevState.errorText + prevInstruction;
+          prevState.shipPlacementInstruction = newInstruction;
+          return prevState;
+        });
+      }
+    }
+
+    //called when socket detects a ready status
+
+  }, {
+    key: 'markOpponentReady',
+    value: function markOpponentReady(socketID) {
+      if (socketID !== this.state.socketID) {
+        this.setState({ opponentReadyToPlay: true, opponentPlayerInfo: 'ready to play' });
+        //if current player also ready to play, start game
+        if (this.state.readyToPlay) {
+          this.setState({ currentTurn: true, primaryPlayerInfo: 'Your turn!' });
+        }
+      }
     }
   }, {
     key: 'gameOver',
@@ -13081,20 +13220,9 @@ var GameContainer = function (_React$Component) {
       }
     }
   }, {
-    key: 'markOpponentReady',
-    value: function markOpponentReady(socketID) {
-      if (socketID !== this.state.socketID) {
-        this.setState({ opponentReadyToPlay: true, opponentPlayerInfo: 'ready to play' });
-
-        if (this.state.readyToPlay) {
-          this.setState({ currentTurn: true, primaryPlayerInfo: 'Your turn!' });
-        }
-      }
-    }
-  }, {
     key: 'receiveShotResponse',
     value: function receiveShotResponse(squareValueAndID) {
-      var _this2 = this;
+      var _this4 = this;
 
       //if statement to check this player made the shot, not the opposite player
       if (squareValueAndID.id == this.state.socketID) return;
@@ -13108,22 +13236,48 @@ var GameContainer = function (_React$Component) {
         if (squareValue === 'x') {
           prevState.hitsScored = prevState.hitsScored + 1;
           if (prevState.hitsScored === 17) {
-            _this2.socket.emit('win', _this2.state.socketID);
+            _this4.socket.emit('win', _this4.state.socketID);
           }
         }
         return prevState;
         // this.checkIfWon()
       });
     }
+
+    //on turn, when tracking square is clicked
+
+  }, {
+    key: 'handleTrackingSquareClick',
+    value: function handleTrackingSquareClick(rowNum, squareNum) {
+      //ignore clicks before game has started
+      if (!this.state.readyToPlay || !this.state.opponentReadyToPlay) return;
+      //ignore clicks if not player's turn
+      if (!this.state.currentTurn) return;
+
+      var coordsAndID = {
+        id: this.state.socketID,
+        row: rowNum,
+        square: squareNum
+      };
+      //sends coords to other user via socket
+      this.setState({ shotTaken: coordsAndID }, function () {
+        this.socket.emit('shotTaken', coordsAndID);
+      });
+      //reverse the turns
+      this.alternateTurn();
+    }
+
+    //called when opponent takes a shot, responds with value of hit or miss
+
   }, {
     key: 'processShot',
     value: function processShot(coordsAndID) {
-      //check that the other player made the shot, and we need to respond
+      //checks that the other player made the shot
       if (coordsAndID.id === this.state.socketID) return;
 
       var row = coordsAndID.row;
       var square = coordsAndID.square;
-
+      //content of square targeted
       var squareValue = this.state.primaryBoard.rows[row][square];
 
       if (squareValue === 'x') {
@@ -13132,7 +13286,7 @@ var GameContainer = function (_React$Component) {
           return prevState;
         });
       }
-
+      //sends the info back to the opponent
       var squareValueAndID = {
         squareValue: squareValue,
         id: this.state.socketID
@@ -13144,142 +13298,13 @@ var GameContainer = function (_React$Component) {
       this.alternateTurn();
     }
 
-    //NEED TO RENAME THIS FUNCTION!
-    //placing own ships function
+    //switches the turns
 
-  }, {
-    key: 'handlePrimaryBoardClick',
-    value: function handlePrimaryBoardClick(rowNum, squareNum) {
-      var _this3 = this;
-
-      //only do this if there are ships remaining to be placed
-      if (this.state.shipsToBePlaced.length === 0) return;
-
-      this.setState(function (prevState) {
-        //check if square is to be marked full or changed to empty
-        if (prevState.primaryBoard.rows[rowNum][squareNum] === '') {
-          prevState.shipCurrentlyBeingPlaced.push([rowNum, squareNum]);
-          prevState.primaryBoard.markSquareFull(rowNum, squareNum);
-        } else {
-          //only allow changes if the ship is the one being currently placed (not already confirmed)
-
-
-          //remove it from the ship currently being placed, and empty square again
-          var indexOfPrevMarker = _this3.findIndexOfMarker(prevState, rowNum, squareNum);
-          console.log(indexOfPrevMarker);
-          if (indexOfPrevMarker !== -1) {
-            prevState.shipCurrentlyBeingPlaced.splice(indexOfPrevMarker, 1);
-            prevState.primaryBoard.rows[rowNum][squareNum] = '';
-          }
-        }
-        return prevState;
-      });
-    }
-
-    //helper method used during placement of ships, if user wants to change marked square back to empty
-
-  }, {
-    key: 'findIndexOfMarker',
-    value: function findIndexOfMarker(prevState, rowNum, squareNum) {
-      var index = -1;
-      for (var i = 0; i < prevState.shipCurrentlyBeingPlaced.length; i++) {
-        if (prevState.shipCurrentlyBeingPlaced[i][0] === rowNum && prevState.shipCurrentlyBeingPlaced[i][1] === squareNum) {
-          index = i;
-        }
-      }
-      return index;
-    }
-  }, {
-    key: 'placeShipHandler',
-    value: function placeShipHandler() {
-      //needs to use validator, and also check each time that the correct number of squares are occupied. If not, there is an overlap in ships - not allowed
-
-      var sizeOfShip = this.state.shipsToBePlaced[0];
-      var submittedShip = this.state.shipCurrentlyBeingPlaced;
-
-      var validator = new _PlacementValidator2.default();
-      var valid = validator.validate(sizeOfShip, submittedShip);
-
-      var currentlyOccupiedSquares = this.state.primaryBoard.getNumOfOccupiedSquares();
-      var newTotalShipSquaresAllocated = this.state.shipSquaresAllocated + sizeOfShip;
-
-      //if placement valid AND if number of squares currently occupied is consistent with boats placed (no overlaps)
-      if (valid && currentlyOccupiedSquares === newTotalShipSquaresAllocated) {
-        this.processValidPlacement();
-      } else {
-        //do this if the placement isn't valid
-        this.processPlacementError();
-      }
-    }
-  }, {
-    key: 'processPlacementError',
-    value: function processPlacementError() {
-      //check if there is already error text
-      if (this.state.errorText === '') {
-        this.setState(function (prevState) {
-          prevState.errorText = 'Error: please ensure ship is of correct size, placed horizontally or vertically, and does not cross an existing ship. ';
-          var prevInstruction = prevState.shipPlacementInstruction;
-          var newInstruction = prevState.errorText + prevInstruction;
-          prevState.shipPlacementInstruction = newInstruction;
-          return prevState;
-        });
-      }
-    }
-  }, {
-    key: 'processValidPlacement',
-    value: function processValidPlacement() {
-      var _this4 = this;
-
-      this.setState(function (prevState) {
-        //remove the first item from the ships to be placed array, and add it to the squares occupied count
-        prevState.shipSquaresAllocated += prevState.shipsToBePlaced.shift();
-        //clears the placement coordinates
-        prevState.shipCurrentlyBeingPlaced = [];
-        //refreshes the instructions
-
-        //check if we need render new instructions
-        if (prevState.shipsToBePlaced.length === 0) {
-          //if no further ships to place, remove the instruction panel and set player as ready to play
-          prevState.readyToPlay = true;
-          prevState.instructionDisplay = 'none';
-          if (_this4.state.opponentReadyToPlay) {
-            prevState.primaryPlayerInfo = 'Wait for opponent turn';
-            prevState.opponentPlayerInfo = 'making their move';
-          } else {
-            prevState.primaryPlayerInfo = 'ready to play';
-          }
-
-          _this4.socket.emit('readyToPlay', _this4.state.socketID);
-        } else {
-          //remove the error text
-          prevState.errorText = '';
-          //create the new instruction
-          var newInstruction = 'Click to place a ship of size: ' + prevState.shipsToBePlaced[0];
-          prevState.shipPlacementInstruction = newInstruction;
-        }
-        return prevState;
-      });
-    }
-  }, {
-    key: 'handleTrackingSquareClick',
-    value: function handleTrackingSquareClick(rowNum, squareNum) {
-      if (!this.state.readyToPlay || !this.state.opponentReadyToPlay) return;
-      if (!this.state.currentTurn) return;
-      var coordsAndID = {
-        id: this.state.socketID,
-        row: rowNum,
-        square: squareNum
-      };
-      this.setState({ shotTaken: coordsAndID }, function () {
-        this.socket.emit('shotTaken', coordsAndID);
-      });
-      this.alternateTurn();
-    }
   }, {
     key: 'alternateTurn',
     value: function alternateTurn() {
       this.setState(function (prevState) {
-        //flip to opposite turn
+        //flip to opposite
         prevState.currentTurn = !prevState.currentTurn;
         if (prevState.currentTurn) {
           prevState.primaryPlayerInfo = 'Your turn!';
