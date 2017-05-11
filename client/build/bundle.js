@@ -13161,12 +13161,16 @@ var GameContainer = function (_React$Component) {
           prevState.shipCurrentlyBeingPlaced.push([rowNum, squareNum]);
           prevState.primaryBoard.markSquareFull(rowNum, squareNum);
         } else {
+          //only allow changes if the ship is the one being currently placed (not already confirmed)
+
+
           //remove it from the ship currently being placed, and empty square again
           var indexOfPrevMarker = _this3.findIndexOfMarker(prevState, rowNum, squareNum);
-
-          // prevState.shipCurrentlyBeingPlaced
-          prevState.shipCurrentlyBeingPlaced.splice(indexOfPrevMarker, 1);
-          prevState.primaryBoard.rows[rowNum][squareNum] = '';
+          console.log(indexOfPrevMarker);
+          if (indexOfPrevMarker !== -1) {
+            prevState.shipCurrentlyBeingPlaced.splice(indexOfPrevMarker, 1);
+            prevState.primaryBoard.rows[rowNum][squareNum] = '';
+          }
         }
         return prevState;
       });
@@ -13177,11 +13181,13 @@ var GameContainer = function (_React$Component) {
   }, {
     key: 'findIndexOfMarker',
     value: function findIndexOfMarker(prevState, rowNum, squareNum) {
+      var index = -1;
       for (var i = 0; i < prevState.shipCurrentlyBeingPlaced.length; i++) {
         if (prevState.shipCurrentlyBeingPlaced[i][0] === rowNum && prevState.shipCurrentlyBeingPlaced[i][1] === squareNum) {
-          return i;
+          index = i;
         }
       }
+      return index;
     }
   }, {
     key: 'placeShipHandler',
