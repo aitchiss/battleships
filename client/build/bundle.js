@@ -12994,9 +12994,9 @@ var _PlacementValidator = __webpack_require__(112);
 
 var _PlacementValidator2 = _interopRequireDefault(_PlacementValidator);
 
-var _BoardContainer = __webpack_require__(110);
+var _BoardGrid = __webpack_require__(241);
 
-var _BoardContainer2 = _interopRequireDefault(_BoardContainer);
+var _BoardGrid2 = _interopRequireDefault(_BoardGrid);
 
 var _ShipPlacementInstruction = __webpack_require__(108);
 
@@ -13325,14 +13325,14 @@ var GameContainer = function (_React$Component) {
         _react2.default.createElement(
           'div',
           { className: 'ship-placement-area' },
-          _react2.default.createElement(_BoardContainer2.default, { size: this.state.primaryBoard.rows.length, boardStatus: this.state.primaryBoard, squareClickHandler: this.handlePrimaryBoardClick.bind(this), title: "Your ships" }),
+          _react2.default.createElement(_BoardGrid2.default, { size: this.state.primaryBoard.rows.length, boardStatus: this.state.primaryBoard, squareClickHandler: this.handlePrimaryBoardClick.bind(this), title: "Your ships" }),
           _react2.default.createElement(_ShipPlacementInstruction2.default, { instruction: this.state.shipPlacementInstruction, buttonClickHandler: this.placeShipHandler.bind(this), displayOption: this.state.instructionDisplay }),
           _react2.default.createElement(_GamePlayInfo2.default, { text: this.state.primaryPlayerInfo })
         ),
         _react2.default.createElement(
           'div',
           { className: 'tracking-area' },
-          _react2.default.createElement(_BoardContainer2.default, { size: this.state.primaryBoard.rows.length, boardStatus: this.state.trackingBoard, squareClickHandler: this.handleTrackingSquareClick.bind(this), title: "Tracking board" }),
+          _react2.default.createElement(_BoardGrid2.default, { size: this.state.primaryBoard.rows.length, boardStatus: this.state.trackingBoard, squareClickHandler: this.handleTrackingSquareClick.bind(this), title: "Tracking board" }),
           _react2.default.createElement(_GamePlayInfo2.default, { text: this.state.opponentPlayerInfo })
         )
       );
@@ -13503,71 +13503,7 @@ var Square = function Square(props) {
 exports.default = Square;
 
 /***/ }),
-/* 110 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _react = __webpack_require__(16);
-
-var _react2 = _interopRequireDefault(_react);
-
-var _BoardRow = __webpack_require__(106);
-
-var _BoardRow2 = _interopRequireDefault(_BoardRow);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var BoardContainer = function (_React$Component) {
-  _inherits(BoardContainer, _React$Component);
-
-  function BoardContainer() {
-    _classCallCheck(this, BoardContainer);
-
-    return _possibleConstructorReturn(this, (BoardContainer.__proto__ || Object.getPrototypeOf(BoardContainer)).apply(this, arguments));
-  }
-
-  _createClass(BoardContainer, [{
-    key: 'render',
-    value: function render() {
-
-      var boardRows = [];
-      for (var i = 0; i < this.props.size; i++) {
-        boardRows[i] = _react2.default.createElement(_BoardRow2.default, { size: this.props.size, key: i, rowNo: i, rowStatus: this.props.boardStatus.rows[i], squareClickHandler: this.props.squareClickHandler });
-      }
-
-      return _react2.default.createElement(
-        'div',
-        { className: 'board' },
-        _react2.default.createElement(
-          'h3',
-          null,
-          this.props.title
-        ),
-        boardRows
-      );
-    }
-  }]);
-
-  return BoardContainer;
-}(_react2.default.Component);
-
-exports.default = BoardContainer;
-
-/***/ }),
+/* 110 */,
 /* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -30930,6 +30866,48 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 window.onload = function () {
   (0, _reactDom.render)(_react2.default.createElement(_GameContainer2.default, { boardSize: 100 }), document.getElementById('app'));
 };
+
+/***/ }),
+/* 241 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(16);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _BoardRow = __webpack_require__(106);
+
+var _BoardRow2 = _interopRequireDefault(_BoardRow);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var BoardGrid = function BoardGrid(props) {
+
+  var boardRows = [];
+  for (var i = 0; i < props.size; i++) {
+    boardRows[i] = _react2.default.createElement(_BoardRow2.default, { size: props.size, key: i, rowNo: i, rowStatus: props.boardStatus.rows[i], squareClickHandler: props.squareClickHandler });
+  }
+
+  return _react2.default.createElement(
+    'div',
+    { className: 'board' },
+    _react2.default.createElement(
+      'h3',
+      null,
+      props.title
+    ),
+    boardRows
+  );
+};
+
+exports.default = BoardGrid;
 
 /***/ })
 /******/ ]);

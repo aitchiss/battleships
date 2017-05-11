@@ -1,7 +1,7 @@
 import React from 'react'
 import Board from '../models/Board'
 import PlacementValidator from '../models/PlacementValidator'
-import BoardContainer from './BoardContainer'
+import BoardGrid from '../components/BoardGrid'
 import ShipPlacementInstruction from '../components/ShipPlacementInstruction'
 import GamePlayInfo from '../components/GamePlayInfo'
 import io from 'socket.io-client'
@@ -269,16 +269,16 @@ class GameContainer extends React.Component{
       <div className="game-container">
         <div className="ship-placement-area">
 
-          <BoardContainer size={this.state.primaryBoard.rows.length} boardStatus={this.state.primaryBoard} squareClickHandler={this.handlePrimaryBoardClick.bind(this)} title={"Your ships"}/>
+          <BoardGrid size={this.state.primaryBoard.rows.length} boardStatus={this.state.primaryBoard} squareClickHandler={this.handlePrimaryBoardClick.bind(this)} title={"Your ships"}/>
           <ShipPlacementInstruction instruction={this.state.shipPlacementInstruction} buttonClickHandler={this.placeShipHandler.bind(this)} displayOption={this.state.instructionDisplay}/>
           <GamePlayInfo text={this.state.primaryPlayerInfo} />
 
         </div>
         <div className ="tracking-area">
 
-          <BoardContainer size={this.state.primaryBoard.rows.length} boardStatus={this.state.trackingBoard} squareClickHandler={this.handleTrackingSquareClick.bind(this)} title={"Tracking board"}/>
+          <BoardGrid size={this.state.primaryBoard.rows.length} boardStatus={this.state.trackingBoard} squareClickHandler={this.handleTrackingSquareClick.bind(this)} title={"Tracking board"}/>
           <GamePlayInfo text={this.state.opponentPlayerInfo}/>
-          
+
         </div>
       </div>
 
